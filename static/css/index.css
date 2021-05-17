@@ -1,0 +1,488 @@
+:root {
+	--foreground-color: #000000;
+	--background-color: #474C55;
+	--button-foreground-color: #000000;
+	--button-background-color: #FFCE34; /*will be changed in js*/
+	--hovercelltitle-foreground-color: #FFFFFF;
+	--hovercell-foreground-color: #DDDDDA;
+	--hovercell-background-color: #1b1d21;
+	--hovercell-hoverforeground-color: #ababaa;
+	--hovercell-hoverbackground-color: #33373e;
+	--highlight-color: #8B008B;
+	--title-color: #FFCE34; /*will be changed in js*/
+}
+
+html, body {
+	font: 12px sans-serif;
+	font-family: 'Nunito', sans-serif;
+	/*font-family: Arial,sans-serif;*/
+	padding:0;
+	margin:0;
+	background-color : var(--background-color);
+	overflow: hidden;
+	color: var(--foreground-color);
+	height: 100%;
+	overscroll-behavior: none;
+}
+
+.scrollable{
+	overflow-y:auto;
+}
+.notScrollable{
+	overflow:hidden;
+}
+.bordered {
+	border:2px solid black;
+}
+.hidden {
+	display:none;
+	opacity:0;
+	visibility:hidden;
+}
+.title {
+	padding:2px;
+	font-size:62px;
+	font-family: 'Josefin Sans', sans-serif;
+	color: var(--title-color);
+	transition: color 0.4s;
+}
+.subTitle {
+	padding:2px;
+	font-size:30px;
+	font-family: 'Josefin Sans', sans-serif;
+}
+.caption {
+	padding:2px;
+	padding-left:10px;
+	font-size:18px;
+}
+.bar1, .bar2, .bar3 {
+	width: 20px;
+	height: 3px;
+	background-color: var(--title-color);
+	margin: 4px;
+	transition: 0.4s;
+}
+.change .bar1 {
+	-webkit-transform: rotate(-45deg) translate(-6px, 4px);
+	transform: rotate(-45deg) translate(-6px, 4px);
+}
+.change .bar2 {
+	opacity: 0;
+}
+.change .bar3 {
+	-webkit-transform: rotate(45deg) translate(-6px, -4px);
+	transform: rotate(45deg) translate(-6px, -4px);
+}
+
+.dot {
+	height: 8px;
+	width: 8px;
+	margin-top:2px;
+	background-color: black;
+	border-radius: 50%;
+	display: inline-block;
+}
+.menuButton{
+	position:absolute;
+	width:28px;
+	height:24px;
+	top:10px;
+	right:20px;
+	z-index:10;
+	font-size:18px;
+}
+.menuButton:hover{
+	cursor: pointer;
+}
+.sliderDiv{
+	padding: 4px;
+	text-align: right;
+	border: 2px solid var(--button-foreground-color);
+	/*border-radius: 5px;*/
+	opacity: 1.0;
+	display:block;
+	color: var(--button-foreground-color);
+	background-color:var(--button-background-color);
+	cursor: pointer;
+	font-size: 18px;
+	height: 32px;
+	line-height: 18px;
+	float: left;
+	margin:0;
+}
+.buttonDiv{
+	padding: 4px;
+	margin: 4px;
+	text-align: center;
+	border: none; /*2px solid var(--button-foreground-color);*/
+	/*border-radius: 5px;*/
+	opacity: 1.0;
+	display:block;
+	color: var(--button-foreground-color);
+	background-color:var(--button-background-color);
+	cursor: pointer;
+}
+/*.buttonDiv:hover {
+	background-color: var(--button-foreground-color);
+	color: var(--button-background-color);
+}*/
+.buttonDiv input{
+	position:absolute;
+	height:50px;
+	width: 50px;
+	padding: 0px;
+	margin: 0px;
+	color: var(--button-foreground-color);
+	/*background-color:var(--button-background-color);*/
+	text-align: center;
+	/*border-radius: 5px;*/
+	opacity: 1.0;
+	display:block;
+	font-size:40px;
+}
+.buttonDivActive {
+	background-color: var(--button-foreground-color);
+	color: var(--button-background-color);
+}
+.buttonDivInverse{
+	padding: 4px;
+	margin: 0px;
+	text-align: center;
+	border: 2px solid var(--button-background-color);
+	/*border-radius: 5px;*/
+	opacity: 1.0;
+	/*display:block;*/
+	font-size:42px;
+	/*background-color: var(--button-foreground-color);*/
+	color:var(--button-background-color);
+	cursor: pointer;
+}
+/*.buttonDivInverse:hover {
+	color: var(--button-foreground-color);
+	background-color: var(--button-background-color);
+}*/
+
+.highlighted{
+	color: var(--highlight-color);
+}
+.bordered{
+	border: 2px solid var(--title-color);
+}
+
+.collapsible:after {
+	content: '\02795'; /* Unicode character for "plus" sign (+) */
+	font-size: 18px;
+	float: left;
+	margin-left: 5px;
+	padding-top:5px;
+	cursor:pointer;
+	color:white;
+}
+.active:after {
+	content: "\2796"; /* Unicode character for "minus" sign (-) */
+	font-size: 18px;
+	float: left;
+	margin-left: 5px;
+	padding-top:5px;
+	cursor:pointer;
+	color:white;
+}
+.redBordered{
+	border:10px solid red;
+	margin: -8px;
+
+}
+.menu{
+	position:absolute;
+	top:0px;
+	background-color: var(--background-color);
+	overscroll-behavior: none;
+
+}
+
+/* DIV BASED TABLES */
+
+.table-wrapper{
+	border: none;
+	/*overflow: auto;*/
+	overscroll-behavior: none;
+	padding:0px;
+}
+
+/*.table-wrapper tr{
+	background-color:var(--title-color);
+}*/
+
+table{
+	border: none;
+	table-layout: fixed;
+	overflow-wrap: break-word;
+	overscroll-behavior: none;
+}
+
+td{
+	height: 50px;
+	padding:5px;
+	overflow-wrap: break-word;
+}
+/*tr{
+	background-color: var(--title-color);
+	color:var(--button-foreground-color);
+}*/
+
+.hoverCellContent{
+	font-size:16px;
+}
+
+.hoverCellTitle{
+	color:var(--hovercelltitle-foreground-color);
+	font-size:20px;
+}
+
+
+.hoverCell{
+	background-color: var(--hovercell-background-color);
+	color:var(--hovercell-foreground-color);
+}
+.hoverCell:hover{
+	cursor: pointer;
+	background-color: var(--hovercell-hoverbackground-color);
+}
+.hoverCellActive{
+	background-color: var(--hovercell-hoverbackground-color);
+}
+
+
+.hoverCellOther{
+	background-color:var(--hovercell-hoverbackground-color);
+	color: var(--hovercell-foreground-color);
+}
+.hoverCellOther:hover{
+	cursor: pointer;
+	background-color: var(--hovercell-background-color);
+}
+.hoverCellOtherActive{
+	background-color: var(--hovercell-background-color);
+}
+.playButton{
+	font-size: 32px;
+	width: 32px;
+	height: 32px;
+	line-height: 32px;
+	float: left;
+	margin:0;
+}
+.removeButton{
+	border-radius: 50%;
+	width: 24px;
+	height: 24px;
+	padding: 0;
+	border: 2px solid red;
+	text-align: center;
+	font: 26px Arial, sans-serif;
+	line-height:25px;
+	color: red;
+	cursor:pointer;
+}
+
+/* to check sizing for some elements*/
+#Test
+{
+	position: absolute;
+	visibility: hidden;
+	height: auto;
+	width: auto;
+	white-space: nowrap; 
+}
+
+.serverDown {
+	background-color: red;
+}
+.serverDown:after {
+	content: " !! SERVER IS DOWN !!";
+}
+.serverDown:before {
+	content: " !! ";
+}
+
+.instructions{
+	position: fixed;
+	display: 'block';
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 20;
+	cursor: pointer;
+}
+
+#instructionsText{
+	font-family: 'Josefin Sans', sans-serif;
+	color:white;
+}
+
+.instructionsMaskSimple{
+	background-color: rgba(0,0,0,0.75);
+}
+
+.instructionsMask:after{
+	content:'';
+	position:absolute;
+	right:-100px; 
+	top:-100px;
+	border-radius:100%;
+	width:200px; 
+	height:200px;
+	box-shadow: 0px 0px 0px 2000px rgba(0,0,0,0.75);
+}
+
+#helpButton{
+	color:var(--title-color);
+	width:28px;
+	height:24px;
+	top:10px;
+	right:60px;
+	z-index:10;
+}
+
+
+#nowShowing{
+	width:100%;
+	position:absolute;
+	left:0;
+	top:50px;
+	z-index:15;
+	background-color:black;
+	color:white;
+	border-radius: 10px 10px 0px 0px; 
+	padding:20px;
+	padding-top:0;
+	min-height:50px;
+}
+.showingTitle{
+	font-family: 'Josefin Sans', sans-serif;
+	color: var(--title-color);
+	font-size:40px;
+	transition: color 0.4s;
+}
+.showingContent{
+	font-family: 'Nunito', sans-serif;
+	font-size:26px;	
+	margin-left:20px;
+}
+
+#objectMenu{
+	position: absolute;
+	top: 0;
+	margin: 0;
+	padding: 0;
+	padding-top: 40px;
+}
+
+#nowShowingExpander{
+	position: relative;
+	text-align:center;
+	top: 0px;
+	height: 20px;
+	width: 100%;
+	margin: auto;
+	padding: 0;
+	cursor:pointer;
+}
+#expanderHandle{
+	position: relative;
+	text-align:center;
+	top: 50%;
+	height: 2px;
+	width: 20px;
+	margin: auto;
+	padding: 0;
+	transition: color 0.4s;
+}
+
+#VLCcontrols{
+	text-align:center;
+	width:100%;
+}
+#VLCseeker{
+	-webkit-appearance: none;
+	width: 100%;
+	margin: 20px 0;
+	background: var(--hovercell-foreground-color);
+	outline: none;
+	height: 10px;
+	border-radius: 5px;
+	overflow: hidden;
+	opacity: 1;
+}
+#VLCseeker:hover {
+	opacity: 1;
+}
+
+#VLCseeker::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 20px;
+	height: 10px;
+	border: 2px solid black;
+	border-top-width: 0px;
+	border-bottom-width: 0px;
+	background: var(--button-background-color);
+	box-shadow: -100vw 0 0 100vw var(--button-background-color);
+	cursor: pointer;
+	-webkit-transition:  0.4s;
+	transition:  0.4s;
+}
+#VLCseeker::-moz-track {
+	background: var(--hovercell-foreground-color);;	
+}
+#VLCseeker::-moz-range-thumb {
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background: var(--button-background-color);
+	box-shadow: -100vw 0 0 100vw var(--button-background-color);
+	cursor: pointer;
+	-webkit-transition:  0.4s;
+	transition:  0.4s;
+}
+.VLCcontrolsIcons{
+	vertical-align: middle;
+	font-size: 60px;
+	line-height: 60px;
+	color: var(--button-background-color);
+	text-align: center;
+	margin: 0 10px;
+	cursor: pointer;
+	transition: color 0.4s;
+}
+#VLCtime{
+	font-size:16px;
+	color: var(--button-background-color);
+	transition: color 0.4s;
+}
+/*for the scrollbar */
+/* width */
+::-webkit-scrollbar {
+	width: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+	background: var(--background-color); 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: var(--hovercell-hoverforeground-color); 
+	border-radius: 3px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+	background: var(--hovercell-foreground-color); 
+	cursor:pointer;
+}

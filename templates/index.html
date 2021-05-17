@@ -1,0 +1,93 @@
+<html>
+
+	<head>
+		<meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no" />
+
+		<title>SVL</title>
+
+		<link href="https://fonts.googleapis.com/css?family=Josefin+Sans|Lato|Nunito|Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+
+		<!-- my style sheet -->
+		<link rel="stylesheet" type="text/css" href="static/css/index.css" />
+
+		<!-- Libraries -->
+		<script src="static/lib/d3.v5.min.js"></script>
+    	<script src="static/lib/socket.io.min.js"></script>
+
+	</head>
+
+	<body>
+		<div id="instructionsMask" class="instructions instructionsMask" onclick="instructionsOff()"></div>
+		<div id="instructionsText" class="instructions" onclick="instructionsOff()">
+
+		</div>
+
+		<!-- starting with instructions showing, so will hide the help button -->
+		<div id="helpButton" class="menuButton" style="display:none; opacity:0;" onclick="instructionsOn()">
+			<span class="material-icons-outlined">help</span>
+		</div>
+
+		<!-- Animated hamburger icon -->
+		<div id="showMenuButton" class="menuButton">
+			<div class='bar1'></div>
+			<div class='bar2'></div>
+			<div class='bar3'></div>
+		</div>
+
+
+		<div id="objectMenu" class="bordered scrollable menu" style="z-index:9"></div>
+
+		<div id="playlistPicker"></div>
+
+		<div id="playlistDiv" style="margin-top:10px; position:absolute">
+			<div id="playlistLabel" class="title"></div>
+			<div id="playlist"></div>
+		</div>
+
+		<div id="nowShowing">
+			<div id="nowShowingExpander">
+				<div id="expanderHandle" class="buttonDiv" ></div>
+			</div>
+			<div id = "showingStubContainer" style="padding-bottom:20px">
+				<div class="showingTitle">Now showing: </div>
+				<div class="showingContent">(Please select an object to view.)</div>
+				<div id="VLCcontrols">
+					<div id="VLCseekerContainer">
+						<input type="range" min="1" max="100" value="50" step="0.1" id="VLCseeker" >
+					</div>
+					<span id="VLCtime" style="margin: 0px 80px 0 0;">0:00</span>
+
+					<span id="VLCrandom" class="material-icons VLCcontrolsIcons" style="font-size:30px; margin:0 40px">shuffle</span>
+
+					<span id="VLCprevious" class="material-icons VLCcontrolsIcons" >skip_previous</span>
+
+					<span id="VLCplaypause" class="material-icons VLCcontrolsIcons">play_circle</span>
+
+					<span id="VLCnext" class="material-icons VLCcontrolsIcons">skip_next</span>
+
+					<span id="VLCrepeat" class="material-icons VLCcontrolsIcons" style="font-size:30px; margin:0 40px">repeat</span>
+
+					<span id="VLCfullscreen" class="material-icons VLCcontrolsIcons" style="font-size:30px; margin:0 0 0 80px">fullscreen</span>
+
+				</div>
+			</div>
+			<div id="currentVLCplaylist"></div>
+		</div>
+
+		<div id="Test"></div>
+
+		<!-- load all my scripts -->
+		<script src="static/js/params.js"></script>
+		<script src="static/js/menu.js"></script>
+		<script src="static/js/playlist.js"></script>
+		<script src="static/js/instructions.js"></script>
+		<script src="static/js/resize.js"></script>
+		<script src="static/js/socketio.js"></script>
+		<script src="static/js/onLoad.js"></script>
+
+		<script>
+			window.onload = init( {{ input|tojson|safe }} );
+		</script>
+	</body>
+
+</html>
