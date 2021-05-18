@@ -373,7 +373,7 @@ def WWTnavigator():
 
 @app.route("/Presenter")
 def presenterNavigator():  
-	return render_template("index.html", input=json.dumps({'playlist':['WWT', 'Movies2D', 'Movies3D'], 'presenter':True}))
+	return render_template("index.html", input=json.dumps({'playlist':['WWT', 'Movies2D', 'Movies3D', 'Uniview'], 'presenter':True}))
 
 
 #This is run on load

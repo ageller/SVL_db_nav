@@ -85,23 +85,35 @@ function getPlaylistData(p){
 //Note that the csv files are not included on GitHub
 	out = {}
 	out.id = 'playlist'
-	if (p == 'Movies2D'){
-		//out.id = 'playlistMovies2D';
-		out.dataFile = 'static/data/private/allMovies2D.csv';
-		out.data = params.Movies2Ddata;
-		out.color = '#29FF5E';
-	}
-	if (p == 'Movies3D'){
-		//out.id = 'playlistMovies3D';
-		out.dataFile = 'static/data/private/allMovies3D.csv';
-		out.data = params.Movies3Ddata;
-		out.color = '#F75454';
-	}
-	if (p == 'WWT'){
-		//out.id = 'playlistWWT';
-		out.dataFile = 'static/data/private/allWWTObjects.csv';
-		out.data = params.WWTdata;
-		out.color = '#FFCE34';
+	switch(p){
+		case 'Movies2D':
+			//out.id = 'playlistMovies2D';
+			out.dataFile = 'static/data/private/allMovies2D.csv';
+			out.data = params.Movies2Ddata;
+			out.color = '#29FF5E';
+			break;
+		case 'Movies3D':
+			//out.id = 'playlistMovies3D';
+			out.dataFile = 'static/data/private/allMovies3D.csv';
+			out.data = params.Movies3Ddata;
+			out.color = '#F75454';
+			break;
+		case 'WWT':
+			//out.id = 'playlistWWT';
+			out.dataFile = 'static/data/private/allWWTObjects.csv';
+			out.data = params.WWTdata;
+			out.color = '#FFCE34';
+			break;
+		case 'Uniview':
+			//out.id = 'playlistWWT';
+			out.dataFile = null;
+			out.data = null;
+			out.color = '#7651FE';
+			break;
+		default:
+			out.dataFile = null;
+			out.data = null;
+			out.color = '#FFFFFF';
 	}
 
 	return out
@@ -155,7 +167,7 @@ function init(inp) {
 	const readPromises = []
 	params.availablePlaylists.forEach(function(d,i){
 		var v = getPlaylistData(d);
-		readPromises.push( new Promise(function(resolve, reject) {d3.csv(v.dataFile).then(resolve)}) );
+		if (v.dataFile)	readPromises.push( new Promise(function(resolve, reject) {d3.csv(v.dataFile).then(resolve)}) );
 	})
 
 	//first get the server information
@@ -179,8 +191,10 @@ function init(inp) {
 					console.log('have compiled data', data1);
 					params.availablePlaylists.forEach(function(d,i){
 						var v = getPlaylistData(d);
-						v.data.sorted = data1[i].sorted;
-						v.data.raw = data1[i].raw;
+						if (v.data){
+							v.data.sorted = data1[i].sorted;
+							v.data.raw = data1[i].raw;
+						}
 					});
 					//populate the menu with all the categories
 					populateMenu();

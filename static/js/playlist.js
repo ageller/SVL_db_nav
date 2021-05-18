@@ -10,51 +10,61 @@ function createPlaylist(){
 
 	document.documentElement.style.setProperty('--title-color', vals.color);
 	document.documentElement.style.setProperty('--button-background-color', vals.color);
-
-
-	var input = vals.data.sorted[params.playlistKey];
-
+	
 	d3.select('#playlistLabel').html("");
 	d3.select('#playlist').html("");
 
-	d3.select('#playlistLabel').append('div')
-		.attr('class','title')
-		.text(params.playlistKey);
+	if (vals.data){
+		d3.select('#showMenuButton').classed('hidden', false);
+		d3.select('#nowShowing').classed('hidden', false);
 
-	var playlist = d3.select('#'+vals.id)
+		var input = vals.data.sorted[params.playlistKey];
 
-	if (!input) input = [];
+		d3.select('#playlistLabel').append('div')
+			.attr('class','title')
+			.text(params.playlistKey);
 
-	//now make the table
-	//will need to size this based on window, and add this to resize
-	if (input[0]){
-		var tabFinished = false;
-		var foo = makeTable(input, playlist)
-		var tab = foo[0];
-		tabFinished = foo[1];
-		d3.selectAll('.playlistItem'+playlist.attr('id'))
-			.on('click', function(){
-				showIndex(parseInt(d3.select(this).node().dataset.index));
-			})
+		var playlist = d3.select('#'+vals.id)
 
-		var intv = window.setInterval(function(){
-			if (tabFinished) {
-				clearInterval(intv);
-				resizeTable(tab);
+		if (!input) input = [];
 
-				if (params.activePlaylist.includes('Movies')){
-					getVLCstatus();
-					getVLCplaylist();
-					startVLCloop();
-					getVLCcurrent();
-				} 
-				if (params.activePlaylist == 'WWT'){
-					populateShowing();
-					stopVLCloop();
+		//now make the table
+		//will need to size this based on window, and add this to resize
+		if (input[0]){
+			var tabFinished = false;
+			var foo = makeTable(input, playlist)
+			var tab = foo[0];
+			tabFinished = foo[1];
+			d3.selectAll('.playlistItem'+playlist.attr('id'))
+				.on('click', function(){
+					showIndex(parseInt(d3.select(this).node().dataset.index));
+				})
+
+			var intv = window.setInterval(function(){
+				if (tabFinished) {
+					clearInterval(intv);
+					resizeTable(tab);
+
+					if (params.activePlaylist.includes('Movies')){
+						getVLCstatus();
+						getVLCplaylist();
+						startVLCloop();
+						getVLCcurrent();
+					} 
+					if (params.activePlaylist == 'WWT'){
+						populateShowing();
+						stopVLCloop();
+					}
+
 				}
+			},100)
 
-			}
-		},100)
+		}
+	} else {
+		d3.select('#showMenuButton').classed('hidden', true);
+		d3.select('#nowShowing').classed('hidden', true);
+
+		if (params.activePlaylist == 'Uniview') createUniviewPanel();
 
 	}
 
@@ -449,41 +459,41 @@ function createPlaylistPicker(){
 
 	d3.select('#playlistLabel').style('margin-top','10px');
 
-	var cb = getComputedStyle(document.body).getPropertyValue('--hovercell-background-color');
-	var cf = getComputedStyle(document.body).getPropertyValue('--hovercell-foreground-color');
-
 	params.availablePlaylists.forEach(function(d){
 		vals = getPlaylistData(d);
 		picker.append('div')
 			.attr('class','buttonPicker subTitle buttonDiv')
 			.attr('id','playlistPicker'+d)
 			.style('cursor','pointer')
-			.style('width',(params.windowWidth/params.availablePlaylists.length - 10*(params.availablePlaylists.length - 1)) + 'px')
+			.style('width',(params.windowWidth/params.availablePlaylists.length) + 'px')
+			.style('border-right','1px solid var(--background-color)')
 			.style('padding','10px')
 			.style('margin', '0px')
 			.style('float','left')
-			.style('background-color',cb)
-			.style('color',cf)
+			.style('background-color','var(--hovercell-background-color)')
+			.style('color','var(--hovercell-foreground-color)')
+			.style('box-sizing','border-box')
 			.style('transition', '0.4s')
 			.attr('data-color', vals.color)
 			.text(d)
 			.on('click', function(){
 				params.activePlaylist = d3.select(this).attr('id').replace('playlistPicker','');
 				console.log('changing playlist to ', params.activePlaylist);
+
 				createPlaylist();
 
 				d3.selectAll('.buttonPicker')
-					.style('background-color',cb)
-					.style('color',cf)
+					.style('background-color','var(--hovercell-background-color)')
+					.style('color','var(--hovercell-foreground-color)')
 
 				var c = d3.select(this).attr('data-color')
 				d3.select(this)
 					.style('background-color',c)
 					.style('color','black');
 
-				d3.select('#nowShowingExpander').classed('hidden',params.activePlaylist == 'WWT');
-				d3.select('#VLCcontrols').classed('hidden',params.activePlaylist == 'WWT');
-				d3.select('#currentVLCplaylist').classed('hidden',params.activePlaylist == 'WWT');
+				d3.select('#nowShowingExpander').classed('hidden',!params.activePlaylist.includes('Movies'));
+				d3.select('#VLCcontrols').classed('hidden',!params.activePlaylist.includes('Movies'));
+				d3.select('#currentVLCplaylist').classed('hidden',!params.activePlaylist.includes('Movies'));
 			})
 	})
 
@@ -520,5 +530,28 @@ function showHideExpander(){
 		top = params.windowHeight - h;
 		elem.transition().duration(400).style('top',top + 'px')
 	}
+
+}
+
+/////////////////////// Uniview only
+function createUniviewPanel(){
+	//insert the Uniview controller
+	var vals = getPlaylistData(params.activePlaylist);
+
+	var hb = d3.select('.buttonPicker').node().getBoundingClientRect().height;
+
+	d3.select('#playlist').append('iframe')
+		.attr('src',params.server.Uniview)
+		.attr('name','UniviewiFrame')
+		.attr('scrolling','yes')
+		.attr('frameborder',1)
+		.attr('marginheight','0px')
+		.attr('marginwidth','0px')
+		.attr('height',(params.windowHeight - hb - 50) + 'px')
+		//.style('border','4px solid ' + vals.color)
+		//.attr('width',(params.windowWidth - 35 - 8) + 'px')
+		.attr('width','100%')
+		.style('margin',0)
+		.style('margin-top','20px')
 
 }

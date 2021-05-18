@@ -44,7 +44,8 @@ function resizeDivs(){
 
 	if (params.presenter){
 		//top tab bar
-		d3.selectAll('.buttonPicker').style('width',(params.windowWidth/params.availablePlaylists.length - 10*(params.availablePlaylists.length - 1)) + 'px');
+		//d3.selectAll('.buttonPicker').style('width',(params.windowWidth/params.availablePlaylists.length - 10*(params.availablePlaylists.length - 1)) + 'px');
+		d3.selectAll('.buttonPicker').style('width',(params.windowWidth/params.availablePlaylists.length) + 'px');
 		var h3 = d3.select('.buttonPicker').node().getBoundingClientRect().height;
 		d3.select('#objectMenu').style('height', h2 - h3 - 4 - 40 + 'px');
 		d3.select('#playlistDiv').style('top', h3 + 'px'); 
