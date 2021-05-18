@@ -1,16 +1,12 @@
+//these functions are used to resize the divs on load and if the user resizes the window 
+//this will also recreate the playlist for the given category so that everything aligns properly
+
 function getShowingHeight(){
-	var h = parseFloat(d3.select('#nowShowing').style('padding-top'));// + parseFloat(d3.select('#nowShowing').style('padding-bottom')); 
+	var h = parseFloat(d3.select('#nowShowing').style('padding-top'));
 	var bb = d3.select('#showingStubContainer').node().getBoundingClientRect();
 	h += bb.height;
 	h += parseFloat(d3.select('#showingStubContainer').style('padding-bottom'));
-	// d3.select('#nowShowing').selectAll('div').each(function(){
-	// 	if (this.id != 'currentVLCplaylist' && !d3.select(this).classed('tableElement') && this.id != 'VLCseekerContainer'){
-	// 		var bb = d3.select(this).node().getBoundingClientRect();
-	// 		h += bb.height;
-	// 		console.log('===!!!',this.id, bb.height, this)
 
-	// 	}
-	// })
 	return h;
 }
 

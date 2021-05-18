@@ -1,4 +1,8 @@
+//functions in this file control the playlists that are shown to all users when they select a category
+//Note that this is NOT the current VLC playlist (which is only shown to presenters).  I apologize for the confusing naming convention!
+
 function createPlaylist(){
+//create the playlist from the available objects in the given category
 
 	var vals = getPlaylistData(params.activePlaylist);
 
@@ -59,7 +63,8 @@ function createPlaylist(){
 
 
 function formatInfo(d){
-	//add the name and notes
+//grab the available information on the object and format it for displaying on the website
+
 	var notes = '';
 
 	if (d['name']) notes = '<span class="hoverCellTitle"><b>' + d['name'] +'</b></span>';
@@ -89,7 +94,7 @@ function formatInfo(d){
 }
 
 function highlightIndex(id){
-
+//highlight the currently showing object
 
 	//first reset all highlighting
 	var elem1 = d3.select('#' + id);
@@ -123,6 +128,8 @@ function highlightIndex(id){
 }
 
 function showIndex(index){
+//show an object based on the index within the array.  (This will initiate a call to the server via flask)
+
 	var vals = getPlaylistData(params.activePlaylist);
 
 	params.nowShowing[params.activePlaylist] = vals.data.raw[index];
@@ -138,6 +145,9 @@ function showIndex(index){
 }
 
 function populateShowing(){
+//populate the "Now showing" div that contains the object currently on display and highlight the appropriate object
+//this will also require resizing of various elements based on the size of the now showing div
+
 	var vals = getPlaylistData(params.activePlaylist);
 
 	highlightIndex(vals.id);
@@ -185,7 +195,7 @@ function populateShowing(){
 
 
 function compileCategoriesFromCSV(inp){
-	//convert the csv input into the original (json) format that I started writing this code with
+//convert the csv input into the original (json) format that I started writing this code with
 	console.log('compiling categories from', inp, [inp.length, inp[0].length]);
 
 	outDict = [];
@@ -250,6 +260,7 @@ function compileCategoriesFromCSV(inp){
 }
 
 function makeTable(input, elem, width=null, height=null, fill='default', extraControl=false){
+//make a table that has the objects from the input (e.g., all objects in a given category) and add it to the DOM element (elem)
 
 	if (!width){
 		width = params.windowWidth - 2; //2 for border (?)
@@ -391,7 +402,7 @@ function makeTable(input, elem, width=null, height=null, fill='default', extraCo
 }
 
 function resizeTable(tab){
-	//resize everything so that the header aligns 
+//resize the table so it fills the space properly and accounts for a possible scrollbar 
 
 	var wTable = parseFloat(tab.select('.table-wrapper').style('width'));
 	
@@ -414,6 +425,7 @@ function resizeTable(tab){
 }
 
 function getColumnWidth(elem, selection){
+//get the width of the column
 	var w = 0.
 	elem.selectAll(selection).each(function(){
 		var ch = d3.select(this)
@@ -423,6 +435,7 @@ function getColumnWidth(elem, selection){
 }
 
 function getTextWidth(elem){
+//use the testing div to find the width of the element with the given text
 	var test = d3.select('#Test')
 	test.style('font-size', elem.style('font-size')).text(elem.text())
 	return Math.round(test.node().getBoundingClientRect().width);
@@ -430,6 +443,8 @@ function getTextWidth(elem){
 
 
 function createPlaylistPicker(){
+//for the presenter mode, this will create the buttons on the top of the website that allows for 
+//switching between, e.g., WorlWide Telescope, VLC and Uniview
 	var picker = d3.select('#playlistPicker')
 
 	d3.select('#playlistLabel').style('margin-top','10px');
@@ -486,6 +501,8 @@ function createPlaylistPicker(){
 }
 
 function showHideExpander(){
+//show or hide the current VLC playlist (only for presenter mode)
+
 	if (params.activePlaylist != 'WWT'){
 		params.nowShowingExpanded = !params.nowShowingExpanded;
 	}

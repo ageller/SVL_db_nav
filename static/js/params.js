@@ -1,3 +1,6 @@
+//I will use the params object to hold all the global variables that I want access to throughout all the functions
+//this will be executed when the page loads
+
 let params;
 function defineParams(){
 	params = new function() {

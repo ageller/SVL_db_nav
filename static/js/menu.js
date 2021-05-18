@@ -1,4 +1,7 @@
+//these functions create the buttons that allow the user to choose different categories
+
 function populateMenu(){
+//create the menu with all the buttons, based on all the unique categories
 
 	var menu = d3.select('#objectMenu');
 	params.categories.forEach(function(key){
@@ -51,6 +54,8 @@ function populateMenu(){
 
 
 function showHideMenu(){
+//show of hide the menu.  This is connected to the hamburger symbol in the upper right of the page.
+
 	params.showingMenu = !params.showingMenu;
 
 	if (params.showingMenu){

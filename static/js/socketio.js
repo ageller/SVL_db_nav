@@ -1,3 +1,5 @@
+//this code contains all the commands that are sent to and received from flask via web sockets
+
 //https://blog.miguelgrinberg.com/post/easy-websockets-with-flask-and-gevent
 //https://github.com/miguelgrinberg/Flask-SocketIO
 function connectSocket(){
@@ -74,11 +76,13 @@ function connectSocket(){
 
 ///////////////// WWT controls
 function flyWWT(cmd){
+//send the http command through flask to move WorldWide telescope to the desired position
 	var url = params.server.WWT + cmd
 	console.log('flying WWT', url)
 	params.socket.emit('sendHTTPCommand', {url:url, server:params.server.WWT, id:params.activePlaylist});
 }
 function showRandomWWT(){
+//show a random object from the WorldWide telescope database
 	var vals = getPlaylistData(params.activePlaylist);
 
 	d3.select('#'+vals.id).selectAll('.hoverCell').classed('hoverCellActive', false);
@@ -95,21 +99,24 @@ function showRandomWWT(){
 
 ///////////////// VLC controls
 function getVLCstatus(p=null){
+//request the VLC status via flask
 	if (!p) p = params.activePlaylist;
 	console.log('requesting status', p)
 	params.socket.emit('statusVLC_request', {id:p, server:params.server[p]}); 
 }
 function getVLCplaylist(p=null){
+//request the VLC playlist via flask
 	if (!p) p = params.activePlaylist;
 	params.socket.emit('playlistVLC_request', {id:p, server:params.server[p]});
 }
 function getVLCcurrent(p=null){
+//request the current VLC movie via flask
 	if (!p) p = params.activePlaylist;
 	params.socket.emit('currentVLC_request', {id:p, server:params.server[p]});
 }
 
-//find a movie in the database by file name in the database
 function setCurrentByFileName(name){
+//find a movie by file name in the database
 	var vals = getPlaylistData(params.activePlaylist);
 	var haveCurrent = false;
 	params.nowShowing[params.activePlaylist] = null;
@@ -125,17 +132,18 @@ function setCurrentByFileName(name){
 	})		
 }
 
-//this will start a background loop on the server to get the current movie each second and send back here when there is a change
 function startVLCloop(){
-	params.socket.emit('startVLCloop', {id:params.activePlaylist, server:params.server[params.activePlaylist]});
+//this will start a background loop within flask to get regularly the current movie and status and send back here when there is a change
+	params.socket.emit('startVLCloop');
 }
 
-//this will stop the background loop on the server
 function stopVLCloop(){
+//this will stop the background loop in flask
 	params.socket.emit('stopVLCloop');
 }
-//this will play a single movie and remove all others from the playlist
+
 function playSingleVLCmovie(location){
+//this will play a single movie and remove all others from the playlist
 	//stopVLCloop();
 
 	var server = params.server[params.activePlaylist];
@@ -185,15 +193,15 @@ function playSingleVLCmovie(location){
 
 }
 
-//remove all items from the playlist that are not currently playing
 function cleanVLCplaylist(){
+//remove all items from the playlist that are not currently playing
 	params.navigatorReady[params.activePlaylist] = false
 	var server = params.server[params.activePlaylist]
 	params.socket.emit('cleanVLCplaylist', {server:server, id:params.activePlaylist});
 }
 
-//this will add a random movie to the end of the playlist
 function addRandomVLC(){
+//this will add a random movie to the end of the playlist
 	var vals = getPlaylistData(params.activePlaylist);
 
 	d3.select('#'+vals.id).selectAll('.hoverCell').classed('hoverCellActive', false);
@@ -223,11 +231,10 @@ function addRandomVLC(){
 		}
 	}, 1*1000)
 
-
-	//need a way to update the showing div
 }
 
 function setVLCtimeFromFrac(frac){
+//set the VLC time slider and numerical value from the fraction of the length
 	if (params.activePlaylist.includes('Movies')){
 		var time = frac*params.VLCstatus[params.activePlaylist].length;
 		var min = Math.floor(time/60.);
@@ -244,7 +251,9 @@ function setVLCtimeFromFrac(frac){
 		d3.select('#VLCseeker').node().value = frac*100;
 	}
 }
+
 function updateVLCcontrols(){
+//update all the VLC controls that the presenter sees, based on the current status
 	if (params.VLCstatus[params.activePlaylist].state == 'paused') d3.select('#VLCplaypause').text('play_circle');
 	if (params.VLCstatus[params.activePlaylist].state == 'playing') d3.select('#VLCplaypause').text('pause_circle');
 
@@ -254,7 +263,6 @@ function updateVLCcontrols(){
 	if (params.VLCstatus[params.activePlaylist].repeat) d3.select('#VLCrepeat').text('repeat_one');
 	if (!params.VLCstatus[params.activePlaylist].repeat) d3.select('#VLCrepeat').text('repeat');
 	if (!params.VLCstatus[params.activePlaylist].repeat && !params.VLCstatus[params.activePlaylist].loop) d3.select('#VLCrepeat').style('color','var(--hovercell-foreground-color)');
-
 
 
 	if (!params.VLCseeking){
@@ -269,11 +277,10 @@ function updateVLCcontrols(){
 		});
 	}
 
-
 }
 
 function sendVLCcontrolsCommand(cmd, p=null, getStatus=true, blocked=true, getPlaylist=false){
-
+//send a command to VLC via flask that comes from the presenter's controls
 
 	if (!p) p = params.activePlaylist;
 
@@ -298,6 +305,7 @@ function sendVLCcontrolsCommand(cmd, p=null, getStatus=true, blocked=true, getPl
 }
 
 function blinkControlButton(elem){
+//change the color of the controls button and then revert to default, when the user clicks
 	elem.style('color','var(--hovercell-foreground-color)');
 	window.setTimeout(function(){
 		elem.style('color','var(--button-background-color)')
@@ -305,6 +313,7 @@ function blinkControlButton(elem){
 }
 
 function setupVLCcontrols(){
+//connect all the VLC presenter controls to the appropriate functions
 
 	//play-pause
 	d3.select('#VLCplaypause')
@@ -392,17 +401,17 @@ function setupVLCcontrols(){
 }
 
 function removeFromVLCplaylist(elem){
-//shouldn't users be able to remove the one that is playing?  It will show the VLC window.  But then they can just play another one
+//remove a movie from the current VLC playlist
+//should users be able to remove the one that is playing?  It will show the VLC window.  But then they can just play another one
 	console.log('====== removing from VLC playlist', elem);
 	sendVLCcontrolsCommand(['pl_delete&id=' + elem.dataset.VLCplaylistID], params.activePlaylist, true, true, true);
 
 }
 
 function updateVLCplaylist(){
-	//create the table with the VLC playlist
-	//ideally this will allow users to select movies to play (without adding to the playlist), and to remove items from the playlist
-	//first will need to find the movies that are in the playlist
-	//I may be able to make this more efficient if I check to see if the playlist has changed before deleting everything (but maybe that will already be taken care of with the rest of the code timing?)
+//(re)make the current VLC playlist that is shown to presenters
+//first will need to find the movies that are in the playlist
+//I may be able to make this more efficient if I check to see if the playlist has changed before deleting everything (but maybe that will already be taken care of with the rest of the code timing?)
 
 	console.log('=== creating VLC playlist div')
 	//for safety

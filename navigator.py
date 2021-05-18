@@ -1,3 +1,8 @@
+'''
+This code runs a flask server that enables the individual and presenter modes of the SVL app.
+The code here runs the "backend", and handles calls to WorldWide Telescope and VLC and also any communication needed between the app modes.
+'''
+
 ##### NOTE: I need to rename the Power of Ten movie on the SVL computer to remove the "TM" superscript
 
 from flask import Flask, render_template, session, jsonify
@@ -12,6 +17,7 @@ import xml.etree.ElementTree as ET
 import time
 import json
 
+#get the server info.  Note: this is not on GitHub.
 with open ('static/data/private/serverInfo.json') as f:
 	data = json.load(f)
 
@@ -19,6 +25,7 @@ pw = data['pw']
 namespace = data['namespace']
 host = data['host']
 port = data['port']
+servers = data['server']
 
 responseTimeout = 3
 
@@ -40,7 +47,10 @@ seconds = 0.1 #not sure what the best cadence is -- I want the time to move smoo
 threadRunning = False
 
 
+
 def initializeStatus():
+#these are the values that I want to keep in the VLC status
+#I initialize them to default blank values
 	return {'fullscreen':True,
 			'time':0,
 			'length':0,
@@ -51,13 +61,16 @@ def initializeStatus():
 			'random':False,
 			'serverUp':False}
 
-#these will only hold the values for the active playlist (Movies2D or Movies3D)
-VLCplaylist = None
-VLCstatus = initializeStatus()
-VLCcurrent = {'name':None}
+#these will only hold the values for the active VLC playlist (Movies2D or Movies3D)
+
+VLCplaylist = {'Movies2D':None, 'Movies3D':None}
+VLCstatus = {'Movies2D':initializeStatus(), 'Movies3D':initializeStatus()}
+VLCcurrent = {'Movies2D':{'name':None}, 'Movies3D':{'name':None}}
 
 
 def getVLCplaylist(inputData):
+#grab the VLC playlist from the VLC server
+
 	iden = inputData['id']
 	server = inputData['server']
 	url = server + "/requests/playlist.xml"
@@ -78,6 +91,7 @@ def getVLCplaylist(inputData):
 
 
 def getVLCstatus(inputData):
+#grab the VLC status from the VLC server
 
 	iden = inputData['id']
 	server = inputData['server']
@@ -116,6 +130,8 @@ def getVLCstatus(inputData):
 	return status
 
 def isDiffStatus(s1, s2):
+#check if one status is different from another (to streamline updating in app)
+
 	for k in s1:
 		if (s1[k] != s2[k]):
 			return True
@@ -123,6 +139,8 @@ def isDiffStatus(s1, s2):
 	return False
 
 def getVLCcurrent(inputData):
+#get the movie that is currently playing in VLC, from the playlist
+
 	iden = inputData['id']
 	server = inputData['server']
 	url = server + "/requests/playlist.xml"
@@ -139,49 +157,61 @@ def getVLCcurrent(inputData):
 						cur = {'name':child2.attrib['name'], 'uri':child2.attrib['uri'], 'id':child2.attrib['id'], 'current':False}
 	return cur
 
+
+def background_thread():
 #background thread to check when currently movie changes in VLC
-#runs every X seconds
-#will this work for both servers if they are running simultaneously?
-def background_thread(inputData):
+#runs every X seconds, as defined above
+#I hard-coded in the two IDs ('Movies2D' and 'Movies3D')
 
 	global VLCcurrent, VLCstatus
 
-	print('========= thread started', inputData)
+	print('========= thread started')
 	#initialize
 
-	iden = inputData['id']
-	server = inputData['server']
 
-	checkCurrent = getVLCcurrent(inputData)
-	socketio.emit('currentVLC'+iden, checkCurrent, namespace=namespace)
-	VLCcurrent = checkCurrent
+	checkCurrent = {}
+	checkStatus = {}
+	names = ['Movies2D', 'Movies3D']
 
-	checkStatus = getVLCstatus(inputData)
-	socketio.emit('statusVLC'+iden, checkStatus, namespace=namespace)
-	VLCstatus = checkStatus
+	for iden in names:
+
+		inputData = {'id':iden, 'server':servers[iden]}
+
+		checkCurrent[iden] = getVLCcurrent(inputData)
+		socketio.emit('currentVLC'+iden, checkCurrent[iden], namespace=namespace)
+		VLCcurrent[iden] = checkCurrent[iden]
+
+		checkStatus[iden] = getVLCstatus(inputData)
+		socketio.emit('statusVLC'+iden, checkStatus[iden], namespace=namespace)
+		VLCstatus[iden] = checkStatus[iden]
 
 
 	#run the loop
 	while (threadRunning):
 		socketio.sleep(seconds)
+		for iden in names:
+			inputData = {'id':iden, 'server':servers[iden]}
 
-		#check the current playlist item
-		checkCurrent = getVLCcurrent(inputData)
-		if (checkCurrent['name'] != VLCcurrent['name']):
-			print('========= current', iden, checkCurrent)
-			socketio.emit('currentVLC'+iden, checkCurrent, namespace=namespace)
-			VLCcurrent = checkCurrent
-
-
-		#check the status
-		checkStatus = getVLCstatus(inputData);
-		if (isDiffStatus(checkStatus, VLCstatus)):
-			#print('========= status changed', iden) #this will happen a lot because the time will change when the movie is playing
-			socketio.emit('statusVLC'+iden, checkStatus, namespace=namespace)
-			VLCstatus = checkStatus
+			#check the current playlist item
+			checkCurrent[iden] = getVLCcurrent(inputData)
+			if (checkCurrent[iden]['name'] != VLCcurrent[iden]['name']):
+				print('========= current', iden, checkCurrent[iden])
+				socketio.emit('currentVLC'+iden, checkCurrent[iden], namespace=namespace)
+				VLCcurrent[iden] = checkCurrent[iden]
 
 
+			#check the status
+			checkStatus[iden] = getVLCstatus(inputData);
+			if (isDiffStatus(checkStatus[iden], VLCstatus[iden])):
+				#print('========= status changed', iden) #this will happen a lot because the time will change when the movie is playing
+				socketio.emit('statusVLC'+iden, checkStatus[iden], namespace=namespace)
+				VLCstatus[iden] = checkStatus[iden]
 
+
+############################
+#Below here are web-socket calls.  They will be initiated by javascript.
+#Many also return values to javascipt
+#Some will print messages to the terminal
 
 #a test on the js side
 @socketio.on('connection_test', namespace=namespace)
@@ -209,7 +239,7 @@ def reset_timeout(message):
 
 #start the background thread for VLC
 @socketio.on('startVLCloop', namespace=namespace)
-def startVLCloop(inputData):
+def startVLCloop():
 	print('========= starting VLC loop')
 	global thread, threadRunning
 
@@ -220,9 +250,9 @@ def startVLCloop(inputData):
 		threadRunning = True
 		with thread_lock:
 			if thread is None:
-				thread = socketio.start_background_task(background_thread, inputData)
+				thread = socketio.start_background_task(background_thread)
 
-#start the background thread for VLC
+#stop the background thread for VLC
 @socketio.on('stopVLCloop', namespace=namespace)
 def stopVLCloop():
 	print('========= stopping VLC loop')
@@ -239,7 +269,7 @@ def playlistVLC_request(inputData):
 	playlist = getVLCplaylist(inputData)
 
 	iden = inputData['id']
-	VLCplaylist = playlist
+	VLCplaylist[iden] = playlist
 
 	print("========= playlist"+iden)#+":",playlist)
 	socketio.emit('playlistVLC'+iden, playlist, namespace=namespace)
@@ -254,7 +284,7 @@ def statusVLC_request(inputData):
 	status = getVLCstatus(inputData)
 
 	iden = inputData['id']
-	VLCstatus = status
+	VLCstatus[iden] = status
 
 	print("========= status "+iden)#+":",status)
 	socketio.emit('statusVLC'+iden, status, namespace=namespace)
@@ -281,6 +311,8 @@ def cleanVLCplaylist(inputData):
 
 	socketio.emit('navigatorReady'+iden, True, namespace=namespace)
 
+
+#get the current playlist movie from VLC
 @socketio.on('currentVLC_request', namespace=namespace)
 def currentVLC_request(inputData):	
 	global VLCcurrent
@@ -288,20 +320,22 @@ def currentVLC_request(inputData):
 	check = getVLCcurrent(inputData)
 
 	iden = inputData['id']
-	VLCcurrent = check
+	VLCcurrent[iden] = check
 
 	print('========= current', check)
 	socketio.emit('currentVLC'+iden, check, namespace=namespace)
 
-#run http request
+#run http request (generic, and works for either WorldWide Telescope or VLC, and could work for any other)
 @socketio.on('sendHTTPCommand', namespace=namespace)
 def sendHTTPCommand(inputData):
 	iden = inputData['id']
 	url = inputData['url']
+	#on the JS side I implemented blocking so that other commands aren't sent while this is processing
+	#If blocked is True, then the JS will wait until it receives the navigatorReady signal before sending the next command in a sequence
 	blocked = False
 	if (isinstance(url,list)):
 		if (len(url) > 1):
-			blocked = True #on the JS side I expect to implement blocking so that other commands aren't sent while this is processing
+			blocked = True 
 	else:
 		url = [url]
 
@@ -323,8 +357,8 @@ def sendHTTPCommand(inputData):
 
 	return True
 
-
-#flask stuff
+############################
+#below here is where flask defines what url each part of the app will occupy and sends the necessary input values
 @app.route("/Movies2D")
 def Movies2Dnavigator():  
 	return render_template("index.html", input=json.dumps({'playlist':['Movies2D'], 'presenter':False}))
@@ -341,6 +375,8 @@ def WWTnavigator():
 def presenterNavigator():  
 	return render_template("index.html", input=json.dumps({'playlist':['WWT', 'Movies2D', 'Movies3D'], 'presenter':True}))
 
+
+#This is run on load
 if __name__ == "__main__":
 	print('Starting server...')
 

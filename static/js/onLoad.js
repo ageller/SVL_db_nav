@@ -1,4 +1,7 @@
-//https://stackoverflow.com/questions/25405359/how-can-i-select-last-child-in-d3-js
+//everything in this file is executed when the website loads
+//I think not all of the initial functions are used in the code currently, but they may be helpful later, so I will keep them
+
+//add some functionality to d3 selections
 d3.selection.prototype.first = function() { 
 	return d3.select(this.nodes()[0]); 
 }; 
@@ -6,11 +9,14 @@ d3.selection.prototype.second = function() {
 	return d3.select(this.nodes()[1]); 
 }; 
 d3.selection.prototype.last = function() {
+//https://stackoverflow.com/questions/25405359/how-can-i-select-last-child-in-d3-js
 	var last = this.size() - 1;
 	return d3.select(this.nodes()[last]); 
 }; 
-//https://stackoverflow.com/questions/3954438/how-to-remove-item-from-array-by-value
+
+//add some functionality to the standard javascript Array
 Array.prototype.remove = function() {
+//https://stackoverflow.com/questions/3954438/how-to-remove-item-from-array-by-value
 	var what, a = arguments, L = a.length, ax;
 	while (L && this.length) {
 		what = a[--L];
@@ -20,10 +26,27 @@ Array.prototype.remove = function() {
 	}
 	return this;
 };
+Array.prototype.contains = function(v) {
+	for (var i = 0; i < this.length; i++) {
+	if (this[i] === v) return true;
+	}
+	return false;
+};
 
-//https://stackoverflow.com/questions/44429173/javascript-encodeuri-failed-to-encode-round-bracket
-//to fix the parentheses, but I may need to fix others!
+Array.prototype.unique = function() {
+//https://stackoverflow.com/questions/11246758/how-to-get-unique-values-in-an-array
+	var arr = [];
+	for (var i = 0; i < this.length; i++) {
+	if (!arr.contains(this[i])) {
+		arr.push(this[i]);
+	}
+	}
+	return arr;
+}
+
 function superEncodeURI(url) {
+//add URI encoding so that all characters can be interpreted properly
+//https://stackoverflow.com/questions/44429173/javascript-encodeuri-failed-to-encode-round-bracket
 
 	var encodedStr = '', encodeChars = ["(", ")", "&", ",", "!"];
 	url = encodeURI(url);
@@ -41,37 +64,25 @@ function superEncodeURI(url) {
 	return encodedStr;
 }
 
-//https://stackoverflow.com/questions/11068240/what-is-the-most-efficient-way-to-parse-a-css-color-in-javascript
 function parseRGBA(input){
+//interpret a CSS RGBA color and return it as an Array
+//https://stackoverflow.com/questions/11068240/what-is-the-most-efficient-way-to-parse-a-css-color-in-javascript
 	m = input.match(/^rgba\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+\.\d+)\s*\)/i);
 	if (m) {
 		return [m[1],m[2],m[3],m[4]];
 	}
 }
 
-//https://stackoverflow.com/questions/11246758/how-to-get-unique-values-in-an-array
-Array.prototype.contains = function(v) {
-	for (var i = 0; i < this.length; i++) {
-	if (this[i] === v) return true;
-	}
-	return false;
-};
 
-Array.prototype.unique = function() {
-	var arr = [];
-	for (var i = 0; i < this.length; i++) {
-	if (!arr.contains(this[i])) {
-		arr.push(this[i]);
-	}
-	}
-	return arr;
-}
-
+//When the user clicks anywhere on the screen I will resent the timeout for the instructions screen
+//Note also that when the instructions screen comes on, the VLC and WorlWide Telescope servers start a randomized show
 //window.addEventListener('touchstart', resetInstructionsTimeout);
 window.addEventListener('click', resetInstructionsTimeout);
 
 
 function getPlaylistData(p){
+//return data for each specific playlist so that I can keep the rest of the code more general
+//Note that the csv files are not included on GitHub
 	out = {}
 	out.id = 'playlist'
 	if (p == 'Movies2D'){
@@ -97,7 +108,7 @@ function getPlaylistData(p){
 }
 
 ///////////////////////////
-// runs on load
+// runs on load, called from index.html
 ///////////////////////////
 function init(inp) {
 	input = JSON.parse(inp);
@@ -113,9 +124,7 @@ function init(inp) {
 	}
 
 	var titleAddon = params.availablePlaylists[0];
-	if (params.presenter) {
-		titleAddon = 'Presenter';
-	} 
+	if (params.presenter) titleAddon = 'Presenter';
 
 	//get specific values based on the playlist type
 	vals = getPlaylistData(params.activePlaylist);
@@ -134,21 +143,22 @@ function init(inp) {
 		setupVLCcontrols();
 	}
 
+	//when the window resizes, call my resize function
 	d3.select(window).on("resize", resizeDivs);
 
+	//when the user clicks the hamburger symbol, show or hide the menu that shows the different categories
 	d3.select('#showMenuButton').on('click',showHideMenu);
 
 
 
-	//read in the data and compile the categories
-
+	//set up promised that will read in the data
 	const readPromises = []
 	params.availablePlaylists.forEach(function(d,i){
 		var v = getPlaylistData(d);
 		readPromises.push( new Promise(function(resolve, reject) {d3.csv(v.dataFile).then(resolve)}) );
 	})
 
-	//get the server information
+	//first get the server information
 	new Promise(function(resolve, reject) {
 		d3.json('static/data/private/serverInfo.json').then(function(info){
 
@@ -157,8 +167,11 @@ function init(inp) {
 			params.movieLocationPrefix = info.movieLocationPrefix;
 			params.namespace = info.namespace;
 			params.socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + params.namespace);
+
+			//set up the web sockets
 			connectSocket();
 
+			//now read in all the available objects and movies and compile the different categories
 			Promise.all(readPromises).then(function(data0) {
 				new Promise(function(resolve, reject) {
 					resolve(compileCategoriesFromCSV(data0));
@@ -169,8 +182,13 @@ function init(inp) {
 						v.data.sorted = data1[i].sorted;
 						v.data.raw = data1[i].raw;
 					});
+					//populate the menu with all the categories
 					populateMenu();
+
+					//create the active playlist
 					createPlaylist();
+
+					//start the randomized presentation for the active playlist (unless in presenter mode)
 					if (!params.presenter) randomize();
 				})
 			});

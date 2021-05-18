@@ -1,5 +1,13 @@
+//these functions control the instructions overlay that will appear when the app is inactive for a set amount of time
+//If the app is inactive, then random objects and/or Movies will be shown.
+//The default timeout is set to 5 minutes.
+//When the presenter uses the app, the timeout is reset to 60 minutes.   
+//If the presenter used the app and then is finished, once the presenter app has been inactive for 60 minutes, the timeout resets to 5 minutes.
+
+
 function instructionsOn() {
-	//reset to the default timeout interval	
+//turn on the instructions, ,and reset the default timeout interval (in case it was made longer by the presenter)
+
 	params.instructionsTimeout = params.instructionsTimeoutDefault;
 	console.log('resetting instructions timeout', params.instructionsTimeout);
 
@@ -19,6 +27,8 @@ function instructionsOn() {
 }
 
 function instructionsOff() {
+//fade off the instructions page, when the user click on it (connected directly in the HTML)
+
 	d3.selectAll('.instructions').transition().duration(500)
 		.style('opacity',0)
 		.on('end', function(){
@@ -33,6 +43,7 @@ function instructionsOff() {
 }
 
 function randomize(){
+//initiate the random slideshow or movie playlist
 
 	///////////////// WWT
 	if (params.activePlaylist == "WWT"){
@@ -68,8 +79,10 @@ function randomize(){
 }
 
 function restartInstructionsTimeout(){
+//(re)start the timeout for the instructions.  
+//this is called after flask returns from the reset_timeout call
+//When the timeout finishes, turn on the instructions screen and start the randomized show
 
-	//when that is finished, add the random videos to the playlist
 	var blocker = setInterval(function(){
 		if (params.navigatorReady[params.activePlaylist]){
 			console.log('restarting instructions timeout', params.instructionsTimeout);
@@ -87,7 +100,10 @@ function restartInstructionsTimeout(){
 	}, 1*1000)
 
 }
+
 function resetInstructionsTimeout(){
+//reset the timeout interval.  This is called each time the user clicks on the screen
+//for the presenter, if they click done, this will reset the timeout back to the default (5 mins)
 
 	if (params.instructionsTimeoutHandle) window.clearTimeout(params.instructionsTimeoutHandle);
 	if (params.randomWWTinterval) clearInterval(params.randomWWTinterval);
@@ -95,8 +111,8 @@ function resetInstructionsTimeout(){
 	var elem = document.elementFromPoint(event.clientX, event.clientY);
 	var isDone = (elem.id == 'helpButton' || elem.parentNode.id == 'helpButton');
 
+	//send to flask to reset the timeout length
 	if (params.presenter && !isDone){
-		//send to flask to reset the timeout length
 		params.navigatorReady[params.activePlaylist] = false;
 		params.socket.emit('reset_timeout', {time: params.instructionsTimeoutPresenter}); 
 	} else {
@@ -107,6 +123,8 @@ function resetInstructionsTimeout(){
 
 
 function populateInstructions(){
+//add the appropriate text to the instructions div based on what is showing and who is the user
+
 	var elem = d3.select('#instructionsText');
 	elem.html('');
 

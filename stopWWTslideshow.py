@@ -1,3 +1,12 @@
+'''
+This code will automatically turn off the slideshow in WorldWide Telescope that is initiated in the current "WWTBasic" starter.
+This code will manipulate the mouse in order to access the menu and click on the checkbox.  (This appears to be the easiest method.)
+The .bat file can be used to run the code from startup (or from a double click on the .bat file).
+Currently this is implemented to run at startup on the "tilewall".
+
+'''
+
+
 import time
 
 #########toggle WWT fullscreen. 
@@ -77,7 +86,7 @@ def toggleWWTslideshow(inFullscreen = True):
 #############################################################
 if __name__ == '__main__':
 
-	#check if WWT is running\
+	#check if WWT is running
 	print('Checking that WWT is running...')
 	running = False
 	while (not running):
