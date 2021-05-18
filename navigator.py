@@ -371,6 +371,10 @@ def Movies3Dnavigator():
 def WWTnavigator():  
 	return render_template("index.html", input=json.dumps({'playlist':['WWT'], 'presenter':False}))
 
+@app.route("/Uniview")
+def UniviewNavigator():  
+	return render_template("index.html", input=json.dumps({'playlist':['Uniview'], 'presenter':False}))
+
 @app.route("/Presenter")
 def presenterNavigator():  
 	return render_template("index.html", input=json.dumps({'playlist':['WWT', 'Movies2D', 'Movies3D', 'Uniview'], 'presenter':True}))

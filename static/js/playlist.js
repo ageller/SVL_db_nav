@@ -17,6 +17,8 @@ function createPlaylist(){
 	if (vals.data){
 		d3.select('#showMenuButton').classed('hidden', false);
 		d3.select('#nowShowing').classed('hidden', false);
+		d3.select('#playlistLabel').classed('hidden', false);
+		d3.select('#playlistDiv').style('margin-top', '10px'); 
 
 		var input = vals.data.sorted[params.playlistKey];
 
@@ -538,20 +540,23 @@ function createUniviewPanel(){
 	//insert the Uniview controller
 	var vals = getPlaylistData(params.activePlaylist);
 
-	var hb = d3.select('.buttonPicker').node().getBoundingClientRect().height;
+	d3.select('#playlistLabel').classed('hidden', true);
+	d3.select('#playlistDiv').style('margin-top', '0px'); 
 
-	d3.select('#playlist').append('iframe')
+	var frame = d3.select('#playlist').append('iframe')
 		.attr('src',params.server.Uniview)
-		.attr('name','UniviewiFrame')
+		.attr('name','UniviewIframe')
 		.attr('scrolling','yes')
 		.attr('frameborder',1)
 		.attr('marginheight','0px')
 		.attr('marginwidth','0px')
-		.attr('height',(params.windowHeight - hb - 50) + 'px')
-		//.style('border','4px solid ' + vals.color)
-		//.attr('width',(params.windowWidth - 35 - 8) + 'px')
+		.attr('height','100%')
 		.attr('width','100%')
 		.style('margin',0)
-		.style('margin-top','20px')
+
+	if (params.presenter){
+		var hb = d3.select('.buttonPicker').node().getBoundingClientRect().height;
+		frame.style('margin-top','45px').attr('height',(params.windowHeight - hb - 55) + 'px')
+	}
 
 }

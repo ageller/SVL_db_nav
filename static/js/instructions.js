@@ -128,20 +128,25 @@ function populateInstructions(){
 	var elem = d3.select('#instructionsText');
 	elem.html('');
 
-	if (params.presenter){
+	d3.select('#helpButton').classed('hidden',false);
+	
+	if (params.presenter || params.activePlaylist == "Uniview"){
 		d3.select('#instructionsMask')
 			.classed('instructionsMask', false)
 			.classed('instructionsMaskSimple', true);
 
-		d3.select('#helpButton')
-			.classed('buttonDiv',true)
-			.style('width','100px')
-			.style('right','100px')
-			.style('color','var(--button-foreground-color)')
-			.style('margin-top','-2px')
-			.select('span')
-				.attr('class','')
-				.text('Done')
+		if (params.presenter){
+			d3.select('#helpButton')
+				.classed('buttonDiv',true)
+				.style('width','100px')
+				.style('right','100px')
+				.style('color','var(--button-foreground-color)')
+				.style('margin-top','-2px')
+				.select('span')
+					.attr('class','')
+					.text('Done')
+		}
+		if (params.activePlaylist == "Uniview") d3.select('#helpButton').classed('hidden',true)
 
 		elem.append('div')
 			.style('position', 'absolute')
@@ -152,8 +157,7 @@ function populateInstructions(){
 			.style('text-align','left')
 			.text('Touch this screen to begin.');
 
-	}
-	else {
+	} else {
 		d3.select('#instructionsMask')
 			.classed('instructionsMaskSimple', false)
 			.classed('instructionsMask', true);

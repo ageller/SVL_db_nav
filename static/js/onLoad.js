@@ -174,7 +174,6 @@ function init(inp) {
 	new Promise(function(resolve, reject) {
 		d3.json('static/data/private/serverInfo.json').then(function(info){
 
-			console.log('==info', info)
 			params.server = info.server;
 			params.movieLocationPrefix = info.movieLocationPrefix;
 			params.namespace = info.namespace;
@@ -186,7 +185,11 @@ function init(inp) {
 			//now read in all the available objects and movies and compile the different categories
 			Promise.all(readPromises).then(function(data0) {
 				new Promise(function(resolve, reject) {
-					resolve(compileCategoriesFromCSV(data0));
+					if (data0.length > 0) {
+						resolve(compileCategoriesFromCSV(data0));
+					} else {
+						resolve()
+					}
 				}).then(function(data1){
 					console.log('have compiled data', data1);
 					params.availablePlaylists.forEach(function(d,i){
