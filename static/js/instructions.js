@@ -45,6 +45,8 @@ function instructionsOff() {
 function randomize(){
 //initiate the random slideshow or movie playlist
 
+	console.log('============= starting randomize');
+	
 	params.inRandomize = true;
 
 	///////////////// WWT
