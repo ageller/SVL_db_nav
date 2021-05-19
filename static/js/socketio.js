@@ -148,7 +148,7 @@ function playSingleVLCmovie(location){
 
 	var server = params.server[params.activePlaylist];
 	var file = params.movieLocationPrefix[params.activePlaylist] + superEncodeURI(location);
-	var url = '';
+	var urls = [];
 
 	//check if the movie is already in the playlist and if so don't add it again
 	var plID = -1;
@@ -156,25 +156,25 @@ function playSingleVLCmovie(location){
 		if (d.uri.includes(location)) plID = d.id;
 		if (i == params.VLCplaylist[params.activePlaylist].length - 1){
 			if (plID == -1){
-				url = server + '/requests/status.xml?command=in_play&input=' + file;
+				urls.push(server + '/requests/status.xml?command=in_play&input=' + file);
 			} else {
-				url = server + '/requests/status.xml?command=pl_play&id=' + plID;
+				urls.push(server + '/requests/status.xml?command=pl_play&id=' + plID);
 			}
 		}
 	});
 
-	//add the movie to the playlist and play
-	console.log('playing movie', url)
+
 
 	//make sure the loop is on
-	if (!params.VLCstatus[params.activePlaylist].loop){
-		console.log('turning loop on')
-		//this should also update the params.VLCstatus
-		url =[url, server + '/requests/status.xml?command=pl_loop'];
-		params.socket.emit('sendHTTPCommand', {url:url, server:server, id:params.activePlaylist});
-	}
+	if (!params.VLCstatus[params.activePlaylist].loop) urls.push(server + '/requests/status.xml?command=pl_loop');
 
-	params.socket.emit('sendHTTPCommand', {url:url, server:server, id:params.activePlaylist, blocked:true});
+	//make sure the fullscreen is on
+	if (!params.VLCstatus[params.activePlaylist].fullscreen) urls.unshift(server + '/requests/status.xml?command=fullscreen');
+
+	//add the movie to the playlist and play
+	console.log('playing movie', urls)
+
+	params.socket.emit('sendHTTPCommand', {url:urls, server:server, id:params.activePlaylist, blocked:true});
 
 	//when that is finished, update the status and playlist
 	var blocker = setInterval(function(){
@@ -216,6 +216,15 @@ function addRandomVLC(){
 		var file = params.movieLocationPrefix[params.activePlaylist] + superEncodeURI(vals.data.raw[index].movieLocation);
 		urls.push(server + '/requests/status.xml?command=in_enqueue&input=' + file);
 	}
+
+	//if it is not already playing, then append the play command
+	if (params.VLCstatus[params.activePlaylist].state != 'playing') urls.push(server + '/requests/status.xml?command=pl_play');
+
+	//if it is not already in fullscreen, then append the fullscreen command
+	if (!params.VLCstatus[params.activePlaylist].fullscreen) urls.push(server + '/requests/status.xml?command=fullscreen');
+
+	//make sure the loop is on
+	if (!params.VLCstatus[params.activePlaylist].loop) urls.push(server + '/requests/status.xml?command=pl_loop');
 
 	params.socket.emit('sendHTTPCommand', {url:urls, server:server, id:params.activePlaylist});
 
