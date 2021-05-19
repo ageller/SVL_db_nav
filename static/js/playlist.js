@@ -156,9 +156,11 @@ function showIndex(index){
 	
 }
 
-function populateShowing(){
+function populateShowing(input = null){
 //populate the "Now showing" div that contains the object currently on display and highlight the appropriate object
 //this will also require resizing of various elements based on the size of the now showing div
+
+	if (input) params.nowShowing[params.activePlaylist] = input;
 
 	var vals = getPlaylistData(params.activePlaylist);
 

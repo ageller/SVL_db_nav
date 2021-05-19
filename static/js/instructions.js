@@ -57,8 +57,8 @@ function randomize(){
 	}
 
 	///////////////// VLC
-	startVLCloop();
 	if (params.activePlaylist.includes('Movies')){
+		startVLCloop();
 
 		window.setTimeout(function(){
 			params.navigatorReady[params.activePlaylist] = false
