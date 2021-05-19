@@ -486,6 +486,7 @@ function createPlaylistPicker(){
 
 				createPlaylist();
 
+
 				d3.selectAll('.buttonPicker')
 					.style('background-color','var(--hovercell-background-color)')
 					.style('color','var(--hovercell-foreground-color)')
@@ -498,6 +499,13 @@ function createPlaylistPicker(){
 				d3.select('#nowShowingExpander').classed('hidden',!params.activePlaylist.includes('Movies'));
 				d3.select('#VLCcontrols').classed('hidden',!params.activePlaylist.includes('Movies'));
 				d3.select('#currentVLCplaylist').classed('hidden',!params.activePlaylist.includes('Movies'));
+
+				if (params.activePlaylist != 'Uniview') {
+					var h = getShowingHeight();
+					var top = params.windowHeight - h;
+					d3.select('#nowShowing').transition().duration(400).style('top',top + 'px');
+					params.nowShowingExpanded = false;
+				}
 			})
 	})
 
