@@ -1,5 +1,8 @@
-//functions in this file control the playlists that are shown to all users when they select a category
-//Note that this is NOT the current VLC playlist (which is only shown to presenters).  I apologize for the confusing naming convention!
+//Functions in this file control the "playlists" (i.e., all objects/movies within a given category in the SVL database) 
+//that are shown to all users when they select a category.
+//Note that this does not include the current VLC "playlist" (i.e., the list of movies that are active within the VLC server), 
+//which is only shown to presenters.
+//I apologize for the confusing naming convention!
 
 function createPlaylist(){
 //create the playlist from the available objects in the given category

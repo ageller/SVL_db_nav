@@ -45,6 +45,8 @@ function instructionsOff() {
 function randomize(){
 //initiate the random slideshow or movie playlist
 
+	params.inRandomize = true;
+
 	///////////////// WWT
 	if (params.activePlaylist == "WWT"){
 		if (params.randomWWTinterval) clearInterval(params.randomWWTinterval);
@@ -93,7 +95,7 @@ function restartInstructionsTimeout(){
 				//show the instructions
 				instructionsOn();
 
-				if (!params.presenter) randomize();
+				if (!params.inRandomize && !params.presenter) randomize();
 
 			}, params.instructionsTimeout);
 		}
@@ -104,6 +106,8 @@ function restartInstructionsTimeout(){
 function resetInstructionsTimeout(){
 //reset the timeout interval.  This is called each time the user clicks on the screen
 //for the presenter, if they click done, this will reset the timeout back to the default (5 mins)
+
+	params.inRandomize = false;
 
 	if (params.instructionsTimeoutHandle) window.clearTimeout(params.instructionsTimeoutHandle);
 	if (params.randomWWTinterval) clearInterval(params.randomWWTinterval);

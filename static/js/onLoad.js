@@ -1,4 +1,6 @@
-//everything in this file is executed when the website loads
+//This is run when the page loads and is responsible for reading in all the data and initiating the calls to 
+//other functions (in other files) that build the DOM elements to flesh out the app.  
+//This file also adds some useful additional functionality to D3 selections and the standard Javascript Arrays. 
 //I think not all of the initial functions are used in the code currently, but they may be helpful later, so I will keep them
 
 //add some functionality to d3 selections

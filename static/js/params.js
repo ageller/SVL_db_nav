@@ -34,7 +34,8 @@ function defineParams(){
 		this.instructionsTimeout = 5*60*1000; //five minutes in units of ms
 		this.instructionsTimeoutDefault = 5*60*1000; //five minutes in units of ms
 		this.instructionsTimeoutPresenter = 60*60*1000; //60 minutes in units of ms
-
+		this.inRandomize = false;
+		
 		// this.instructionsTimeoutDefault = 10*1000; //five minutes in units of ms
 		// this.instructionsTimeoutPresenter = 30*1000; //60 minutes in units of ms
 
