@@ -338,6 +338,16 @@ td{
 	height:180px;
 	box-shadow: 0px 0px 0px 2000px rgba(0,0,0,0.75);
 }
+.instructionsMaskMulti:after{
+	content:'';
+	position:absolute;
+	right:-100px; 
+	top:-100px;
+	border-radius:100%;
+	width:220px; 
+	height:220px;
+	box-shadow: 0px 0px 0px 2000px rgba(0,0,0,0.75);
+}
 
 #helpButton{
 	color:var(--title-color);

@@ -164,14 +164,23 @@ function populateInstructions(){
 			.text('Touch this screen to begin.');
 
 	} else {
-		d3.select('#instructionsMask')
-			.classed('instructionsMaskSimple', false)
-			.classed('instructionsMask', true);
+		d3.select('#instructionsMask').classed('instructionsMaskSimple', false)
+		if (params.availablePlaylists.length == 1) {
+			d3.select('#instructionsMask').classed('instructionsMaskMulti', false);
+			d3.select('#instructionsMask').classed('instructionsMask', true);
+		} else {
+			d3.select('#instructionsMask').classed('instructionsMask', false);
+			d3.select('#instructionsMask').classed('instructionsMaskMulti', true);
+
+		}
 
 		if (params.showingMenu){
 			elem.append('div')
 				.style('position', 'absolute')
-				.style('top','10px')
+				.style('top',function(){
+					if (params.availablePlaylists.length == 1) return '10px';
+					return '20px'
+				})
 				.style('right','100px')
 				.style('width','300px')
 				.style('font-size','30px')
@@ -180,7 +189,10 @@ function populateInstructions(){
 
 			elem.append('div')
 				.style('position', 'absolute')
-				.style('top','0px')
+				.style('top',function(){
+					if (params.availablePlaylists.length == 1) return '0px';
+					return '10px'
+				})
 				.style('right','100px')
 				.append('span')
 					.attr('class','material-icons-outlined')
@@ -202,7 +214,10 @@ function populateInstructions(){
 		} else {
 			elem.append('div')
 				.style('position', 'absolute')
-				.style('top','10px')
+				.style('top',function(){
+					if (params.availablePlaylists.length == 1) return '10px';
+					return '20px'
+				})
 				.style('right','160px')
 				.style('width','300px')
 				.style('font-size','30px')
@@ -211,7 +226,10 @@ function populateInstructions(){
 
 			elem.append('div')
 				.style('position', 'absolute')
-				.style('top','0px')
+				.style('top',function(){
+					if (params.availablePlaylists.length == 1) return '0px';
+					return '10px'
+				})
 				.style('right','100px')
 				.append('span')
 					.attr('class','material-icons-outlined')
@@ -219,6 +237,27 @@ function populateInstructions(){
 					.style('line-height','110px')
 					.text('arrow_right_alt')
 
+			if (params.availablePlaylists.length > 1){
+				elem.append('div')
+					.style('position', 'absolute')
+					.style('top','10px')
+					.style('left','10px')
+					.style('width','300px')
+					.style('font-size','30px')
+					.style('text-align','left')
+					.text('Touc these buttons to change the TV.');
+
+				elem.append('div')
+					.style('position', 'absolute')
+					.style('top','20px')
+					.style('left','200px')
+					.append('span')
+						.attr('class','material-icons-outlined')
+						.style('font-size','100px')
+						.style('line-height','110px')
+						.style('transform','rotate(-90deg)')
+						.text('arrow_right_alt')
+			}
 			elem.append('div')
 				.style('position', 'absolute')
 				.style('top','300px')

@@ -28,6 +28,7 @@ function defineParams(){
 		this.playlistKey = 'Star Clusters';
 		this.activePlaylist = null; //WWT, Movies2D, Movies3D (now set from the index file and into init)
 		this.availablePlaylists;
+		this.tabNames = null; //can be used to change the names on the tab bar when multiple availablePlaylists
 
 		//timing to show instructions and random WWT entries
 		this.instructionsTimeoutHandle = null;

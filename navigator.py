@@ -367,6 +367,10 @@ def Movies2Dnavigator():
 def Movies3Dnavigator():  
 	return render_template("index.html", input=json.dumps({'playlist':['Movies3D'], 'presenter':False}))
 
+@app.route("/Movies")
+def MoviesNavigator():  
+	return render_template("index.html", input=json.dumps({'playlist':['Movies2D','Movies3D'], 'presenter':False, 'tabNames':['Top TV','Bottom TV']}))
+
 @app.route("/WWT")
 def WWTnavigator():  
 	return render_template("index.html", input=json.dumps({'playlist':['WWT'], 'presenter':False}))

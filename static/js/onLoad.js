@@ -129,7 +129,9 @@ function init(inp) {
 	console.log('input', inp, input);
 
 	params.availablePlaylists = input.playlist;
-	params.presenter = input.presenter;
+	if ('presenter' in input) params.presenter = input.presenter;
+	if ('tabNames' in input) params.tabNames = input.tabNames;
+
 	params.activePlaylist = params.availablePlaylists[0];
 
 	if (params.availablePlaylists.length > 1){

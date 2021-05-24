@@ -466,7 +466,7 @@ function createPlaylistPicker(){
 
 	d3.select('#playlistLabel').style('margin-top','10px');
 
-	params.availablePlaylists.forEach(function(d){
+	params.availablePlaylists.forEach(function(d,i){
 		vals = getPlaylistData(d);
 		picker.append('div')
 			.attr('class','buttonPicker subTitle buttonDiv')
@@ -482,7 +482,10 @@ function createPlaylistPicker(){
 			.style('box-sizing','border-box')
 			.style('transition', '0.4s')
 			.attr('data-color', vals.color)
-			.text(d)
+			.text(function(){
+				if (params.tabNames) return params.tabNames[i];
+				return d;
+			})
 			.on('click', function(){
 				params.activePlaylist = d3.select(this).attr('id').replace('playlistPicker','');
 				console.log('changing playlist to ', params.activePlaylist);
@@ -499,10 +502,12 @@ function createPlaylistPicker(){
 					.style('background-color',c)
 					.style('color','black');
 
-				d3.select('#nowShowingExpander').classed('hidden',!params.activePlaylist.includes('Movies'));
-				d3.select('#VLCcontrols').classed('hidden',!params.activePlaylist.includes('Movies'));
-				d3.select('#currentVLCplaylist').classed('hidden',!params.activePlaylist.includes('Movies'));
-
+				if (params.presenter){
+					d3.select('#nowShowingExpander').classed('hidden',!params.activePlaylist.includes('Movies'));
+					d3.select('#VLCcontrols').classed('hidden',!params.activePlaylist.includes('Movies'));
+					d3.select('#currentVLCplaylist').classed('hidden',!params.activePlaylist.includes('Movies'));
+				}
+				
 				if (params.activePlaylist != 'Uniview') {
 					var h = getShowingHeight();
 					var top = params.windowHeight - h;
