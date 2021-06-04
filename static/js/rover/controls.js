@@ -60,19 +60,20 @@ function attachButtons(){
 
 function moveWWT(dir){
 //use the WWT Layer Controls API to send the move command (when a button is clicked)
-//Note that this gives CORS errors in the browser console, but still appears to work. 
-//I could do this within the flask side, but that doesn't seem necessary here.
 
 	var cmd = params.server + '/layerAPI.aspx?cmd=move&move=' + dir
 	console.log(cmd);
+	params.socket.emit('sendHTTPCommand', {url:cmd, server:params.server, id:'WWT'});
 
-	var http = new XMLHttpRequest();
-	http.open("GET", cmd);//.replace("http:", "https:"));
-	http.send();
-	http.onreadystatechange = function(){ //this does not fire because the command is blocked...
-		console.log('WWT state = ', this.readyState, this.status)
-		if (this.readyState == 4){// && this.status == 200){ //I don't think this reaches "success" ==200
-			console.log('finished moving WWT')
-		}
-	}
+//Note that this gives CORS errors in the browser console, but still appears to work. 
+//Since I've now included this Rover app with the main navigator app, I will use flask instead
+	// var http = new XMLHttpRequest();
+	// http.open("GET", cmd);//.replace("http:", "https:"));
+	// http.send();
+	// http.onreadystatechange = function(){ //this does not fire because the command is blocked...
+	// 	console.log('WWT state = ', this.readyState, this.status)
+	// 	if (this.readyState == 4){// && this.status == 200){ //I don't think this reaches "success" ==200
+	// 		console.log('finished moving WWT')
+	// 	}
+	// }
 }

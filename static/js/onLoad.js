@@ -131,6 +131,7 @@ function init(inp) {
 	params.availablePlaylists = input.playlist;
 	if ('presenter' in input) params.presenter = input.presenter;
 	if ('tabNames' in input) params.tabNames = input.tabNames;
+	if ('name' in input) params.appName = input.name;
 
 	params.activePlaylist = params.availablePlaylists[0];
 

@@ -357,36 +357,49 @@ def sendHTTPCommand(inputData):
 
 	return True
 
+#send the reload command to the given app webpage
+@socketio.on('reload_app', namespace=namespace)
+def reloadApp(inputData):
+	print(inputData)
+	socketio.emit('reloadPage', inputData['page'], namespace=namespace)
+	#in case the combined VLC page is open
+	if ('Movies' in inputData['page']):
+		socketio.emit('reloadPage', 'Movies', namespace=namespace)
+
 ############################
 #below here is where flask defines what url each part of the app will occupy and sends the necessary input values
 @app.route("/Movies2D")
 def Movies2Dnavigator():  
-	return render_template("index.html", input=json.dumps({'playlist':['Movies2D'], 'presenter':False}))
+	return render_template("index.html", input=json.dumps({'playlist':['Movies2D'], 'presenter':False, 'name':'Movies2D'}))
 
 @app.route("/Movies3D")
 def Movies3Dnavigator():  
-	return render_template("index.html", input=json.dumps({'playlist':['Movies3D'], 'presenter':False}))
+	return render_template("index.html", input=json.dumps({'playlist':['Movies3D'], 'presenter':False, 'name':'Movies3D'}))
 
 @app.route("/Movies")
 def MoviesNavigator():  
-	return render_template("index.html", input=json.dumps({'playlist':['Movies2D','Movies3D'], 'presenter':False, 'tabNames':['Top TV','Bottom TV']}))
+	return render_template("index.html", input=json.dumps({'playlist':['Movies2D','Movies3D'], 'presenter':False, 'tabNames':['Top TV','Bottom TV'], 'name':'Movies'}))
 
 @app.route("/WWT")
 def WWTnavigator():  
-	return render_template("index.html", input=json.dumps({'playlist':['WWT'], 'presenter':False}))
+	return render_template("index.html", input=json.dumps({'playlist':['WWT'], 'presenter':False, 'name':'WWT'}))
 
 @app.route("/Uniview")
 def UniviewNavigator():  
-	return render_template("index.html", input=json.dumps({'playlist':['Uniview'], 'presenter':False}))
+	return render_template("index.html", input=json.dumps({'playlist':['Uniview'], 'presenter':False, 'name':'Uniview'}))
 
 @app.route("/Presenter")
 def presenterNavigator():  
-	return render_template("index.html", input=json.dumps({'playlist':['WWT', 'Movies2D', 'Movies3D', 'Uniview'], 'presenter':True}))
+	return render_template("index.html", input=json.dumps({'playlist':['WWT', 'Movies2D', 'Movies3D', 'Uniview'], 'presenter':True, 'name':'Presenter'}))
 
 @app.route('/Rover')
 def rover():  
-	return render_template('rover.html')
-	
+	return render_template('rover.html', input=json.dumps({'name':'Rover'}))
+
+@app.route('/Reloader')
+def reloader(): 
+	return render_template('reloader.html')
+
 #This is run on load
 if __name__ == "__main__":
 	print('Starting server...')

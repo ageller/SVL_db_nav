@@ -9,6 +9,7 @@ function defineParams(){
 		this.WWTdata = {raw:null, sorted:null}; 
 		this.Movies2Ddata = {raw:null, sorted:null}; 
 		this.Movies3Ddata = {raw:null, sorted:null}; 
+		this.appName = 'None';
 
 		this.presenter = false;
 

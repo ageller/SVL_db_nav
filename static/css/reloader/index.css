@@ -1,0 +1,35 @@
+:root {
+	--foreground-color: #000000;
+	--background-color: #474C55;
+	--button-foreground-color: #000000;
+}
+
+html, body {
+	font: 12px sans-serif;
+	font-family: 'Nunito', sans-serif;
+	padding:0;
+	margin:0;
+	background-color : var(--background-color);
+	overflow: hidden;
+	color: var(--foreground-color);
+	height: 100%;
+	overscroll-behavior: none;
+}
+
+.buttonDiv{
+	position:absolute;
+	width:80vw;
+	height:10vh;
+	left:10vw;
+	padding: 4px;
+	margin: 4px;
+	text-align: center;
+	border-radius: 5vh;
+	opacity: 1.0;
+	display:block;
+	color: var(--button-foreground-color);;
+	cursor: pointer;
+	font-size:10vh;
+	line-height:10vh;
+
+}

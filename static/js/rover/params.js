@@ -5,10 +5,8 @@ function defineParams(){
 	params = new function() {
 
 		this.server;
-
-		//window size (will be reset if resized)
-		this.windowWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-		this.windowHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+		this.namespace;
+		this.socket;
 
 		//timing to show instructions and random WWT entries
 		this.instructionsTimeoutHandle = null;

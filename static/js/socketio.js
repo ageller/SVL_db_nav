@@ -21,6 +21,13 @@ function connectSocket(){
 		restartInstructionsTimeout();
 	});
 
+	params.socket.on('reloadPage', function(msg) {
+		if (params.appName == msg){
+			console.log('reloading', msg);
+			location.reload();
+		}
+	});
+
 	params.availablePlaylists.forEach(function(p){
 
 		if (p.includes('Movies')){

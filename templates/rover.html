@@ -12,6 +12,7 @@
 
 		<!-- Libraries -->
 		<script src="static/lib/d3.v5.min.js"></script>
+		<script src="static/lib/socket.io.min.js"></script>
 
 	</head>
 
@@ -67,7 +68,12 @@
 		<script src="static/js/rover/params.js"></script>
 		<script src="static/js/rover/instructions.js"></script>
 		<script src="static/js/rover/controls.js"></script>
+		<script src="static/js/rover/socketio.js"></script>
 		<script src="static/js/rover/onLoad.js"></script>
+
+		<script>
+			window.onload = init( {{ input|tojson|safe }} );
+		</script>
 
 	</body>
 
