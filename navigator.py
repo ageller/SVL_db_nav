@@ -383,7 +383,10 @@ def UniviewNavigator():
 def presenterNavigator():  
 	return render_template("index.html", input=json.dumps({'playlist':['WWT', 'Movies2D', 'Movies3D', 'Uniview'], 'presenter':True}))
 
-
+@app.route('/Rover')
+def rover():  
+	return render_template('rover.html')
+	
 #This is run on load
 if __name__ == "__main__":
 	print('Starting server...')

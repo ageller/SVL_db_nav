@@ -1,0 +1,74 @@
+<html>
+
+	<head>
+		<meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no" />
+
+		<title>SVL</title>
+
+		<link href="https://fonts.googleapis.com/css?family=Josefin+Sans|Lato|Nunito|Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+
+		<!-- my style sheet -->
+		<link rel="stylesheet" type="text/css" href="static/css/rover/index.css" />
+
+		<!-- Libraries -->
+		<script src="static/lib/d3.v5.min.js"></script>
+
+	</head>
+
+	<body>
+		<div class="instructions" onclick="instructionsOff()">
+			<div id="instructionsText">
+				Touch this screen to begin.  Then use these buttons to control the view from the Mars Rover.
+			</div>
+		</div>
+
+		<!-- starting with instructions showing, so will hide the help button -->
+		<div id="helpButton" class="menuButton" style="display:none; opacity:0;" onclick="instructionsOn()">
+			<span class="material-icons-outlined">help</span>
+		</div>
+
+
+		<div id="controls">
+			<div id="Left" class="buttonDiv controlsButton pan" style="top:30vh; left:18vw">
+				<span class="material-icons-outlined controlsButtonText">arrow_back_ios</span>
+			</div>
+
+			<div id="Right" class="buttonDiv controlsButton pan" style="top:30vh; left:62vw">
+				<span class="material-icons-outlined controlsButtonText">arrow_forward_ios</span>
+			</div>			
+
+			<div id="Up" class="buttonDiv controlsButton pan" style="top:8vh; left:40vw">
+				<span class="material-icons-outlined controlsButtonText" style="transform: rotate(90deg)">arrow_back_ios</span>
+			</div>	
+
+			<div id="Down" class="buttonDiv controlsButton pan" style="top:52vh; left:40vw;">
+				<span class="material-icons-outlined controlsButtonText" style="transform: rotate(-90deg)">arrow_back_ios</span>
+			</div>	
+
+			<div id="ZoomIn" class="buttonDiv controlsButton zoom" style="top:8vh; left:2vw; width:20vh">
+				<span class="controlsButtonText">+</span>
+			</div>	
+
+			<div id="ZoomOut" class="buttonDiv controlsButton zoom" style="top:52vh; left:2vw; width:20vh">
+				<span class="controlsButtonText">-</span>
+			</div>	
+
+
+			<div id="nextImage" class="buttonDiv imgButton img" style="top:87vh; left:52vw">
+				<span class="imgButtonText">Next image</span>
+			</div>	
+
+			<div id="prevImage" class="buttonDiv imgButton img" style="top:87vh; left:2vw">
+				<span class="imgButtonText">Previous image</span>
+			</div>	
+		</div>
+
+		<!-- load all my scripts -->
+		<script src="static/js/rover/params.js"></script>
+		<script src="static/js/rover/instructions.js"></script>
+		<script src="static/js/rover/controls.js"></script>
+		<script src="static/js/rover/onLoad.js"></script>
+
+	</body>
+
+</html>
