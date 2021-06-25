@@ -242,15 +242,15 @@ function populateInstructions(){
 					.style('position', 'absolute')
 					.style('top','10px')
 					.style('left','10px')
-					.style('width','300px')
+					.style('width','160px')
 					.style('font-size','30px')
 					.style('text-align','left')
-					.text('Touc these buttons to change the TV.');
+					.text('Touch these buttons to change the TV.');
 
 				elem.append('div')
 					.style('position', 'absolute')
 					.style('top','20px')
-					.style('left','200px')
+					.style('left','160px')
 					.append('span')
 						.attr('class','material-icons-outlined')
 						.style('font-size','100px')

@@ -312,6 +312,7 @@ function makeTable(input, elem, width=null, height=null, fill='default', extraCo
 		params.headers.remove('In SVL Database');
 		params.headers.remove('File Name');
 		params.headers.remove('index');
+		params.headers.remove('rawIndex');
 
 		//check to make sure that at least one row has data in each header column (otherwise remove the header)
 		params.headersClean = [];
