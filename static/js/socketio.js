@@ -141,7 +141,7 @@ function setCurrentByFileName(name){
 
 function startVLCloop(){
 //this will start a background loop within flask to get regularly the current movie and status and send back here when there is a change
-	params.socket.emit('startVLCloop');
+	params.socket.emit('startVLCloop',{'names':[params.activePlaylist]});
 }
 
 function stopVLCloop(){
@@ -159,24 +159,29 @@ function playSingleVLCmovie(location){
 
 	//check if the movie is already in the playlist and if so don't add it again
 	var plID = -1;
-	params.VLCplaylist[params.activePlaylist].forEach(function(d,i){
-		if (d.uri.includes(location)) plID = d.id;
-		if (i == params.VLCplaylist[params.activePlaylist].length - 1){
-			if (plID == -1){
-				urls.push(server + '/requests/status.xml?command=in_play&input=' + file);
-			} else {
-				urls.push(server + '/requests/status.xml?command=pl_play&id=' + plID);
+	if (params.VLCplaylist[params.activePlaylist]){
+		params.VLCplaylist[params.activePlaylist].forEach(function(d,i){
+			if (d.uri.includes(location)) plID = d.id;
+			if (i == params.VLCplaylist[params.activePlaylist].length - 1){
+				if (plID == -1){
+					urls.push(server + '/requests/status.xml?command=in_play&input=' + file);
+				} else {
+					urls.push(server + '/requests/status.xml?command=pl_play&id=' + plID);
+				}
 			}
-		}
-	});
+		});
+ 	} else {
+		urls.push(server + '/requests/status.xml?command=in_play&input=' + file);
+	}
 
+	if (params.VLCstatus[params.activePlaylist]){
+		//make sure the loop is on
+		if (!params.VLCstatus[params.activePlaylist].loop) urls.push(server + '/requests/status.xml?command=pl_loop');
 
+		//make sure the fullscreen is on
+		if (!params.VLCstatus[params.activePlaylist].fullscreen) urls.unshift(server + '/requests/status.xml?command=fullscreen');
+	}
 
-	//make sure the loop is on
-	if (!params.VLCstatus[params.activePlaylist].loop) urls.push(server + '/requests/status.xml?command=pl_loop');
-
-	//make sure the fullscreen is on
-	if (!params.VLCstatus[params.activePlaylist].fullscreen) urls.unshift(server + '/requests/status.xml?command=fullscreen');
 
 	//add the movie to the playlist and play
 	console.log('playing movie', urls)
@@ -200,11 +205,19 @@ function playSingleVLCmovie(location){
 
 }
 
-function cleanVLCplaylist(){
+function cleanVLCplaylist(elem=null){
 //remove all items from the playlist that are not currently playing
 	params.navigatorReady[params.activePlaylist] = false
 	var server = params.server[params.activePlaylist]
 	params.socket.emit('cleanVLCplaylist', {server:server, id:params.activePlaylist});
+
+	if (elem) {
+		//triggered from button click
+		elem.style('background-color','var(--hovercell-foreground-color)');
+		window.setTimeout(function(){
+			elem.style('background-color','var(--button-background-color)')
+		},400);
+	}
 }
 
 function addRandomVLC(){
@@ -251,7 +264,7 @@ function addRandomVLC(){
 
 function setVLCtimeFromFrac(frac){
 //set the VLC time slider and numerical value from the fraction of the length
-	if (params.activePlaylist.includes('Movies')){
+	if (params.activePlaylist.includes('Movies') && params.VLCstatus[params.activePlaylist]){
 		var time = frac*params.VLCstatus[params.activePlaylist].length;
 		var min = Math.floor(time/60.);
 		var sec = Math.round(time - min*60);
@@ -471,7 +484,6 @@ function updateVLCplaylist(){
 								resizeTable(tab);
 								populateShowing(); 
 								//tab.style('padding-top','20px');
-
 							}
 						},100)
 					}

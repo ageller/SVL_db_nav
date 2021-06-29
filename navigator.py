@@ -45,7 +45,7 @@ thread_lock = Lock()
 
 seconds = 0.1 #not sure what the best cadence is -- I want the time to move smoothly
 threadRunning = False
-
+threadServers = []
 
 
 def initializeStatus():
@@ -163,15 +163,15 @@ def background_thread():
 #runs every X seconds, as defined above
 #I hard-coded in the two IDs ('Movies2D' and 'Movies3D')
 
-	global VLCcurrent, VLCstatus
+	global VLCcurrent, VLCstatus, threadServers
 
-	print('========= thread started')
+	print('========= thread started', threadServers)
 	#initialize
 
 
 	checkCurrent = {}
 	checkStatus = {}
-	names = ['Movies2D', 'Movies3D']
+	names = threadServers #['Movies2D', 'Movies3D']
 
 	for iden in names:
 
@@ -239,9 +239,9 @@ def reset_timeout(message):
 
 #start the background thread for VLC
 @socketio.on('startVLCloop', namespace=namespace)
-def startVLCloop():
-	print('========= starting VLC loop')
-	global thread, threadRunning
+def startVLCloop(inputData):
+	print('========= starting VLC loop', inputData)
+	global thread, threadRunning, threadServers
 
 	stopVLCloop()
 	socketio.sleep(2*seconds) #to make sure the thread stops
@@ -250,6 +250,7 @@ def startVLCloop():
 		threadRunning = True
 		with thread_lock:
 			if thread is None:
+				threadServers = inputData['names']
 				thread = socketio.start_background_task(background_thread)
 
 #stop the background thread for VLC
@@ -308,7 +309,7 @@ def cleanVLCplaylist(inputData):
 		check = sendHTTPCommand(inputData)
 		playlist = getVLCplaylist(inputData)
 
-
+	socketio.emit('playlistVLC'+iden, playlist, namespace=namespace)
 	socketio.emit('navigatorReady'+iden, True, namespace=namespace)
 
 

@@ -410,6 +410,17 @@ function makeTable(input, elem, width=null, height=null, fill='default', extraCo
 
 			row.classed('dataIndex' + row.node().dataset.index, true);
 
+
+			if (extraControl && i == input.length - 1){
+				//add in a clear playlist button
+				tabContent.append('tr').append('td').append('div')
+					.attr('id','clearPlaylistButton')
+					.attr('class','buttonDiv')
+					.style('color','var(--button-foreground-color)')
+					.style('font-size','20px')
+					.text('Clear Playlist')
+					.on('click',function(){return cleanVLCplaylist(d3.select(this));})
+			}
 		})
 
 
