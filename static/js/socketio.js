@@ -159,10 +159,12 @@ function playSingleVLCmovie(location){
 
 	//check if the movie is already in the playlist and if so don't add it again
 	var plID = -1;
+	var movieIn = false;
 	if (params.VLCplaylist[params.activePlaylist]){
 		params.VLCplaylist[params.activePlaylist].forEach(function(d,i){
 			if (d.uri.includes(location)) plID = d.id;
 			if (i == params.VLCplaylist[params.activePlaylist].length - 1){
+				movieIn = true;
 				if (plID == -1){
 					urls.push(server + '/requests/status.xml?command=in_play&input=' + file);
 				} else {
@@ -170,9 +172,8 @@ function playSingleVLCmovie(location){
 				}
 			}
 		});
- 	} else {
-		urls.push(server + '/requests/status.xml?command=in_play&input=' + file);
 	}
+	if (!movieIn) urls.push(server + '/requests/status.xml?command=in_play&input=' + file);
 
 	if (params.VLCstatus[params.activePlaylist]){
 		//make sure the loop is on
