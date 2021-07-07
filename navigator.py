@@ -393,6 +393,14 @@ def UniviewNavigator():
 def presenterNavigator():  
 	return render_template("index.html", input=json.dumps({'playlist':['WWT', 'Movies2D', 'Movies3D', 'Uniview'], 'presenter':True, 'name':'Presenter'}))
 
+@app.route("/Presenter2D")
+def presenter2DNavigator():  
+	return render_template("index.html", input=json.dumps({'playlist':['WWT', 'Movies2D', 'Uniview'], 'presenter':True, 'tabNames':['WWT','Movies','Uniview'], 'name':'Presenter'}))
+
+@app.route("/Presenter3D")
+def presenter3DNavigator():  
+	return render_template("index.html", input=json.dumps({'playlist':['WWT', 'Movies3D', 'Uniview'], 'presenter':True, 'tabNames':['WWT','Movies','Uniview'], 'name':'Presenter'}))
+
 @app.route('/Rover')
 def rover():  
 	return render_template('rover.html', input=json.dumps({'name':'Rover'}))
