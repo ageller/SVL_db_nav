@@ -371,7 +371,10 @@ function setupVLCcontrols(){
 	d3.select('#VLCprevious').on('click', function(){
 		console.log('previous movie');
 		blinkControlButton(d3.select(this));
-		sendVLCcontrolsCommand(['pl_previous']);
+		//sendVLCcontrolsCommand(['pl_previous']);
+		setVLCtimeFromFrac(0.0);
+		sendVLCcontrolsCommand(['seek&val=0'], params.activePlaylist, false, true);
+
 	})
 
 	//random
