@@ -410,27 +410,33 @@ function setupVLCcontrols(){
 		var time = frac*params.VLCstatus[params.activePlaylist].length;
 		return [frac, time]
 	}
-	d3.select('#VLCseeker')
-		.on('mousedown', function(){
-			params.VLCseeking = true;
+	function startVLCSeeking(){
+		params.VLCseeking = true;
+		var ft = getVLCseekFrac();
+		setVLCtimeFromFrac(ft[0]);
+		params.navigatorReady[params.activePlaylist] = false;
+		sendVLCcontrolsCommand(['seek&val='+Math.round(ft[1])], params.activePlaylist, false, true);
+	}
+	function stopVLCseeking(){
+		params.VLCseeking = false;
+	}
+	function moveVLCseeker(){
+		if (params.VLCseeking){
 			var ft = getVLCseekFrac();
 			setVLCtimeFromFrac(ft[0]);
-			params.navigatorReady[params.activePlaylist] = false;
-			sendVLCcontrolsCommand(['seek&val='+Math.round(ft[1])], params.activePlaylist, false, true);
-		})
-		.on('mouseup', function(){
-			params.VLCseeking = false;
-		})
-		.on('mousemove', function(){
-			if (params.VLCseeking){
-				var ft = getVLCseekFrac();
-				setVLCtimeFromFrac(ft[0]);
-				if (params.navigatorReady[params.activePlaylist]){
-					params.navigatorReady[params.activePlaylist] = false;
-					sendVLCcontrolsCommand(['seek&val='+Math.round(ft[1])], params.activePlaylist, false, true);
-				}
+			if (params.navigatorReady[params.activePlaylist]){
+				params.navigatorReady[params.activePlaylist] = false;
+				sendVLCcontrolsCommand(['seek&val='+Math.round(ft[1])], params.activePlaylist, false, true);
 			}
-		})
+		}
+	}
+	d3.select('#VLCseeker')
+		.on('mousedown', startVLCSeeking)
+		.on('touchstart', startVLCSeeking)
+		.on('mouseup', stopVLCseeking)
+		.on('touchend', stopVLCseeking)
+		.on('mousemove', moveVLCseeker)
+		.on('touchmove', moveVLCseeker)
 }
 
 function removeFromVLCplaylist(elem){
