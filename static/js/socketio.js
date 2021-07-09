@@ -406,7 +406,12 @@ function setupVLCcontrols(){
 	//seeker (this may break things with too many calls to VLC?)
 	function getVLCseekFrac(){
 		var rect = d3.select('#VLCseeker').node().getBoundingClientRect();
-		var frac = parseFloat(d3.event.offsetX)/parseFloat(rect.width);
+		var x = d3.event.offsetX;
+		if (!x){
+			var r = d3.event.target.getBoundingClientRect();
+			x = d3.event.targetTouches[0].pageX - r.left;
+		}
+		var frac = parseFloat(x)/parseFloat(rect.width);
 		var time = frac*params.VLCstatus[params.activePlaylist].length;
 		return [frac, time]
 	}
