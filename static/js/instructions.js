@@ -87,6 +87,9 @@ function restartInstructionsTimeout(){
 //this is called after flask returns from the reset_timeout call
 //When the timeout finishes, turn on the instructions screen and start the randomized show
 
+	params.inRandomize = false;
+	if (params.instructionsTimeoutHandle) window.clearTimeout(params.instructionsTimeoutHandle);
+	clearInterval(params.randomWWTinterval);
 
 	var blocker = setInterval(function(){
 		if (params.navigatorReady[params.activePlaylist]){
@@ -111,7 +114,6 @@ function resetInstructionsTimeout(){
 //for the presenter, if they click done, this will reset the timeout back to the default (5 mins)
 
 	params.inRandomize = false;
-
 	if (params.instructionsTimeoutHandle) window.clearTimeout(params.instructionsTimeoutHandle);
 	clearInterval(params.randomWWTinterval);
 
