@@ -94,7 +94,7 @@ function showRandomWWT(){
 
 	d3.select('#'+vals.id).selectAll('.hoverCell').classed('hoverCellActive', false);
 	var index = parseInt(Math.random()*vals.data.raw.length);
-	console.log('random ', index, vals.data.raw[index]);
+	console.log('WWT random ', index, vals.data.raw[index]);
 
 	populateShowing(vals.data.raw[index]);
 

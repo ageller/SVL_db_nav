@@ -51,7 +51,7 @@ function randomize(){
 
 	///////////////// WWT
 	if (params.activePlaylist == "WWT"){
-		if (params.randomWWTinterval) clearInterval(params.randomWWTinterval);
+		clearInterval(params.randomWWTinterval);
 
 		//begin randomly cycling through the entries
 		showRandomWWT();
@@ -111,10 +111,9 @@ function resetInstructionsTimeout(){
 //for the presenter, if they click done, this will reset the timeout back to the default (5 mins)
 
 	params.inRandomize = false;
-	if (params.randomWWTinterval) clearInterval(params.randomWWTinterval);
 
 	if (params.instructionsTimeoutHandle) window.clearTimeout(params.instructionsTimeoutHandle);
-	if (params.randomWWTinterval) clearInterval(params.randomWWTinterval);
+	clearInterval(params.randomWWTinterval);
 
 	var elem = document.elementFromPoint(event.clientX, event.clientY);
 	var isDone = (elem.id == 'helpButton' || elem.parentNode.id == 'helpButton');
